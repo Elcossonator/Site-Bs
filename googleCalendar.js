@@ -1,79 +1,98 @@
 import { google } from "googleapis";
 import dotenv from "dotenv";
 
-
 dotenv.config();
 
-// ✅ Debug: Ensure environment variables are correctly loaded
+// ✅ Debugging: Ensure environment variables are correctly loaded
 console.log("✅ GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
 console.log("✅ GOOGLE_REFRESH_TOKEN:", process.env.GOOGLE_REFRESH_TOKEN);
+console.log("✅ GOOGLE_CALENDAR_ID:", process.env.GOOGLE_CALENDAR_ID || "primary");
 
 const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    "http://localhost:5001/oauth2callback"
+    process.env.GOOGLE_REDIRECT_URI
 );
 
 auth.setCredentials({
+    access_token: process.env.GOOGLE_ACCESS_TOKEN,
     refresh_token: process.env.GOOGLE_REFRESH_TOKEN
 });
 
-
-
-// ✅ Function to Refresh Access Token
-async function getAccessToken() {
-    try {
-        const { token } = await auth.getAccessToken();
-        console.log("✅ New Access Token:", token);
-        return token;
-    } catch (error) {
-        console.error("❌ Error fetching new access token:", error);
-        return null;
+// ✅ Refresh Access Token Automatically
+auth.on('tokens', (tokens) => {
+    if (tokens.refresh_token) {
+        console.log("✅ New Refresh Token Received:", tokens.refresh_token);
     }
-}
+    console.log("✅ New Access Token Received:", tokens.access_token);
+});
 
 // ✅ Google Calendar API Fetch Function
 export async function fetchGroupedEvents() {
-    try {
-        console.log("🚀 Fetching Google Calendar events...");
+    console.log("🚀 Fetching Google Calendar events...");
 
-        // ✅ Initialize Google Calendar API
-const calendar = google.calendar({ version: "v3", auth });
+    try {
+        console.log("🔍 Using Access Token:", process.env.GOOGLE_ACCESS_TOKEN);
+        console.log("🔍 Using Calendar ID:", process.env.GOOGLE_CALENDAR_ID || "primary");
+
+        const calendar = google.calendar({ version: "v3", auth });
 
         const response = await calendar.events.list({
-            calendarId: process.env.GOOGLE_CALENDAR_ID,
-            timeMin: new Date().toISOString(),  // Only future events
-            maxResults: 30,  // ✅ Limit the number of events returned
+            calendarId: process.env.GOOGLE_CALENDAR_ID || "primary",
+            timeMin: new Date().toISOString(),
+            maxResults: 30,
             singleEvents: true,
             orderBy: "startTime",
-            fields: "items(id,summary,location,start,end,transparency)"  // ✅ Reduce returned data
+            fields: "items(id,summary,location,start,end,transparency)"
         });
 
-        console.log("✅ API Raw Response Received");
+        console.log("📌 Google Calendar API Response:", response.data);
 
         const events = response.data.items || [];
 
         let groupedEvents = {};
 
         events.forEach(event => {
+            if (!event.start || !event.end) return; // ✅ Avoid missing time data
+
             // 📌 Filter out birthdays & irrelevant events
             if (event.summary && event.summary.toLowerCase().includes("anniversaire")) {
-                return; // Skip birthdays
+                return; // ✅ Skip birthdays
             }
 
             // 🔥 Detect "Busy" or "Free" status
             let status = event.transparency === "transparent" ? "Free" : "Busy";
 
-            const location = event.location || "Unknown";
+            let eventDate, eventTime;
+
+            // ✅ Handle both `dateTime` and `date` formats
+            if (event.start.dateTime) {
+                const eventDateTime = new Date(event.start.dateTime);
+                eventDate = eventDateTime.toISOString().split('T')[0]; // YYYY-MM-DD
+                
+                // 🔄 Ensure conversion to French timezone (or your expected format)
+                eventTime = eventDateTime.toLocaleTimeString("fr-FR", { 
+                    hour: "2-digit", 
+                    minute: "2-digit", 
+                    hour12: false  // ✅ Ensure 24-hour format
+                });
+            } else if (event.start.date) {
+                eventDate = event.start.date; // All-day event (YYYY-MM-DD)
+                eventTime = "00:00"; // Default time for all-day events
+            }
+
+            // 🌍 Fix inconsistent location values (Some events may have no location)
+            const location = event.location?.trim() || "Unknown";
+
             if (!groupedEvents[location]) {
                 groupedEvents[location] = [];
             }
 
             groupedEvents[location].push({
                 id: event.id,
-                summary: event.summary,
-                date: event.start.dateTime || event.start.date,
-                time: event.start.dateTime ? new Date(event.start.dateTime).toLocaleTimeString() : "All Day",
+                summary: event.summary || "No Title",
+                date: eventDate,
+                time: eventTime,
                 status,
             });
         });
@@ -82,7 +101,7 @@ const calendar = google.calendar({ version: "v3", auth });
 
         return groupedEvents;
     } catch (error) {
-        console.error("❌ Error fetching Google Calendar events:", error);
+        console.error("❌ Error fetching Google Calendar events:", error.response ? error.response.data : error);
         return {};
     }
 }
