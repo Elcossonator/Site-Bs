@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Configuration des images
     const maxImagesPerFolder = {
-        portfolio: { artwork: 11, tattoo: 18, bijoux: 1 },
-        shop: 10,
-        nextguest: 4, // Nombre d'images pour nextguest
+        portfolio: { tattoo: 18,},
+        inprogress: 10,
+        nextguest: 11, // Nombre d'images pour nextguest
     };
 
  // Gestion du survol des boutons
