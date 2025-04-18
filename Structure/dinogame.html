@@ -21,7 +21,9 @@
 <body>
     
     
+    
     <canvas id="gameCanvas" width="1000" height="500"></canvas>
+  
     
     <script>
         const canvas = document.getElementById("gameCanvas");
@@ -309,6 +311,13 @@ function gameLoop() {
         ctx.font = "30px Arial";
         ctx.fillText(score, scoreImgX + scoreNewWidth + 10, scoreImgY + scoreNewHeight / 2 + 10);
 
+
+        // Display replay message below the score
+ctx.fillStyle = "gray";
+ctx.font = "13px Arial";
+ctx.textAlign = "center";
+ctx.fillText("Press SPACE to replay", canvas.width / 2, scoreImgY + scoreNewHeight + 20);
+
         return; // Stop the game
     }
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -368,6 +377,16 @@ function checkCollision() {
     console.log("Démarrage du jeu avec l'animation de chute...");
     animateFallingChair(); // Start falling animation
 };
+document.addEventListener("keydown", (e) => {
+    if (isGameOver && e.code === "Space") {
+        restartGame();
+    }
+});
+
+function restartGame() {
+    location.reload(); // Recharge toute la page
+}
+
     </script>
 </body>
 </html>
