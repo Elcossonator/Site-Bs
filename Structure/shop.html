@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- SVG d'animation initiale -->
+    <div id="shop-intro">
+        <img src="images/home-SHOP.svg" alt="Shop Icon" id="shop-svg">
+    </div>
+
+    <!-- Aperçu du panier -->
+    <div id="cart-preview">
+        🛒
+        <div id="cart-details" class="hidden">
+            <ul class="cart-items"></ul>
+            <p class="cart-total">Total : <span>0</span> €</p>
+            <button class="checkout-button">Voir le panier</button>
+        </div>
+    </div>
+
+
+    <!-- Section des produits -->
+    <main id="shop-container" class="hidden">
+        <section class="products-grid">
+            <!-- Les produits seront injectés ici via JavaScript -->
+        </section>
+    </main>
+
+    <script src="script-shop.js"></script>
+</body>
+</html>

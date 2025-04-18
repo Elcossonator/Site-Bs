@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "agenda-connected-bruits-sourds",
+  "private_key_id": "2be05f3c8ae6116a3094612e91d426db0038b30b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC2Z3+QO+bD+5Gu\nrJ6oxPLXD9d7EbypXvpzt1lV2e0IVh/N2tGy5VOJYkvL7w4PjYfdOxycWWG9WpSB\n6Nrb9iMZBNinJPMnEkRj3zxBlajSYwREmmfP2FxX1+VcIm4MpmYSLquWCSRHQgKd\nvuoEeTsrUGott6ibC0qNIAipQORqNq1OPLXvGKHvDhSgcUKYFIuzO3eiqE2XSFBZ\n8BWElM/W1cl4rZ5j+I+HM+uLfHWuMMt8Sscon14XFpp1Urd9xmkc81HqdLibzp1V\naxcuOL4Pr13ta0O6ygfkMVb+HTAFNfho9ZhcQdeWAVHMKOOJ4W4ewZHoSDaN5I0D\niZTepR5XAgMBAAECggEAKeBdEvoNotTwv092JX0B24oRiHmr/J6HlWV0pxcfKhjL\nuHEST6YCpbnhePJrIfr2RD479VE39UcEbUbOaE18BVRtgQIkqMWy2dL4fH4lghel\ndTKVvswHd0tjpuForpLNQENitVFn+MwY2appA5npkaomllRh6yaOeRPvqRvy1MdR\nOWItPU9ik5zEc3HvzkgX0TmRK6Yv+0PKed3c/UZDZet/ptfzNybEe056wocM8gUJ\nUZsZ/OPFc3UPpZh9WE/6EuSZvolPXY/VGFRo/Zqn6PuKp4y7ul9mQoVAzgtP9/Hf\n8Y6RoG3yrukO8G++vzP4Xv5yL9KuqECFZeObMy2t4QKBgQDqaqa2+OsesKyd1OID\njRClg3xCtr50XShP2T7TKe3EHIauGbDmhi9hnK9PLUobUhXCGkW/bidb4zw438gY\nVADpiMqw3zboBq2O1ccGh6IoQrUF5s2caTdw1cxdCu8Agod68D1plkQx4P1QMn73\n/3/HPwTvmZ27l7q4py8AQVB/GQKBgQDHMuI10zgqaTv/P2vv2pf92SdUI7Ko6kwB\nftCnQ8OEQVrR9velm6r3xlQvuvaBRU53N64x9WCF1vqwn040TGytGD9q6yJa5T86\nqlsM6EUpfhuqFc2c2lmUrPGYeAcNUvENferMNV/42/u0q1jgf8CQ3/YOCdg1BCEX\nDPJ3pH7m7wKBgQCT4p60dgrWvLzZgZDojpj+4hmFeQZkINUqsrJIw33lp91rfne0\nptjDavbKK5dB7yIc5zgzUYnxFUVL2BnDB1PgANVmiht4e6YIo2NBAlZRsevEAlya\nnWJFhAu+cwRevPo9m8wSjaMOGJOWgZTKXdy91UsG4VG6JDm+/nHPZmUjGQKBgHih\nj+wYpYLJh9PjjHIMZs8Lmo2RsLgqayzcp28j0ltdWKqebQqVYsv6BzGAf5d5aTM5\nPPx0JKfosJgVYT66qXWJoZ4WFxAElG3qjIkcgAXIoOg3m/TJJkarFQPIbDzdZa1N\n+8r+58fFMIEQ4xnRQ8R4XIHT5GL2xTM4W/2oWFFxAoGAXYHscodOY7my/KTsGxmQ\n2cgTDcKNFCLMluyVr32yMWjmB98mJv+IzPt6bT1zIb8pQzHqvuD4gyMcrzwTZBWF\nUqCKujfEoVu0e1kGiLLOgEhWCDCHchWKeEs6Dal1cQQp3UxmlQRyanAlOIBXXvJR\ncQ9vRoAOdmCCpivNe2gkyb8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "bruits-sourds-google-calendar@agenda-connected-bruits-sourds.iam.gserviceaccount.com",
+  "client_id": "108143354596062424371",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bruits-sourds-google-calendar%40agenda-connected-bruits-sourds.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

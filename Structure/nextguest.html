@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Guest - Réservations</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        .location-buttons {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            opacity: 1;
+            transition: left 0s ease-in-out, top 0.2s ease-in-out;
+        }
+        .location-buttons.active {
+            left: 10%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .location-buttons button {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 10px;
+            transition: transform 0.2s ease-in-out, opacity 0.3s ease-in-out;
+            opacity: 1;
+        }
+        .location-buttons button:hover {
+            transform: scale(1.1);
+        }
+        .location-buttons button.active {
+            transform: rotate(-1170deg) scale(1.1);
+            opacity: 1;
+        }
+        .location-buttons.active button:not(.active) {
+            opacity: 0.2;
+        }
+        .location-buttons button:not(.active).above {
+            transform: translateY(-60px);
+        }
+        .location-buttons button:not(.active).below {
+            transform: translateY(60px);
+        }
+        #availability-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.1s ease-in-out;
+        }
+        table {
+            width: 30%;
+            border-collapse: collapse;
+            transform: translateY(-100vh);
+            opacity: 0;
+            transition: transform 0.15s ease-in-out, opacity 0.2s ease-in-out;
+        }
+        table.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        table.hide {
+    opacity: 0;
+    transform: translateY(100vh);
+}
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        th img {
+            height: 27px;
+            width: auto;
+        }
+
+
+        
+
+.slot-btn {
+    width: 20px;  /* Set a fixed size */
+    height: 20px;
+    padding: 5px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+/* Default status icon (traitres) */
+.slot-btn .default-icon {
+    width: 100%;
+    height: auto;
+    transition: opacity 0.3s ease-in-out;
+}
+
+
+/* Hover effect icon (bulle) */
+.hover-icon {
+    position: absolute;
+    top: -20px;
+    left: 50px;
+    width: 100px;
+    height: auto;
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+}
+
+.hover-icon.new-hover {
+    opacity: 0 !important;
+}
+
+td:hover .new-hover {
+    opacity: 1 !important;
+}
+
+/* When hovering, hide the default and show the hover icon */
+td:hover .default-icon {
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out; /* ⏩ Reduced delay */
+}
+
+.slot-btn:hover .hover-icon {
+    opacity: 1 !important;
+}
+
+
+/* 📌 Booking Form Styling */
+#booking-form-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 1000;
+    width: 350px;
+}
+
+/* 📌 Input Groups (for Icon + Input) */
+.input-group {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.input-group img {
+    height: 20px;
+    margin-right: 20px;
+}
+
+.input-group input,
+.input-group textarea {
+    flex: 1;
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 1rem;
+}
+
+/* 📌 Textarea Group (for Project Description) */
+.textarea-group {
+    align-items: flex-start;
+}
+
+.textarea-group textarea {
+    height: 80px;
+    resize: none;
+}
+
+/* 📌 Placeholder Fade Effect */
+.input-group textarea::placeholder {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.input-group textarea:focus::placeholder {
+    opacity: 0;
+}
+
+/* 📌 Submit Button */
+#booking-form-container button {
+    width: 100%;
+    padding: 12px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s ease-in-out;
+}
+
+#booking-form-container button:hover {
+    background: black;
+}
+
+/* 📌 Dark Overlay */
+#agenda-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 99;
+    display: none;
+    pointer-events: all;
+}
+
+/* 📌 Fade Background When Form is Open */
+body.dimmed #next-guest-container > *:not(#booking-form-container):not(#agenda-overlay) {
+    opacity: 0.3;
+    transition: opacity 0.1s ease-in-out;
+}
+
+/* Ensure form and overlay stay fully visible */
+#booking-form-container,
+#agenda-overlay {
+    opacity: 1 !important;
+}
+
+
+    </style>
+</head>
+<body>
+
+
+    <div class="location-buttons" id="location-buttons"></div>
+    <div id="availability-container"></div>
+
+    <div id="booking-form-container" style="display: none;">
+        <form id="booking-form">
+           
+    
+            <!-- Date Input -->
+            <div class="input-group">
+                <img src="images/date.svg" alt="Date Icon">
+                <input type="text" id="date" readonly>
+            </div>
+    
+            <!-- Time Input -->
+            <div class="input-group">
+                <img src="images/heure.svg" alt="Heure Icon">
+                <input type="text" id="time" readonly>
+            </div>
+    
+            <!-- Location Input -->
+            <div class="input-group">
+                <img src="images/ville.svg" alt="Location Icon">
+                <input type="text" id="location" readonly>
+            </div>
+    
+            <!-- Email Input -->
+            <div class="input-group">
+                <img src="images/email.svg" alt="Mail Icon">
+                <input type="email" id="email" placeholder="Votre Email" required>
+            </div>
+    
+            <!-- Message Input -->
+            <div class="input-group textarea-group">
+                <img src="images/projet.svg" alt="Projet">
+                <textarea id="project-description" name="project" placeholder="Bonjour,
+                J'aurai souhaité faire un projet avec vous/toi
+                J'aimerai faire ....
+                D'une taille approximative ... cm
+                Sur cet endroit (si possible joindre une photo bien en face de la zone désirée dans la suite de l'échange)
+                J'aurai un budget de ...
+                Qu'en penses tu?
+                Formalités blablablabla
+                Et un petit sourire :)
+                "></textarea>
+            </div>
+    
+            <!-- Submit Button -->
+            <button type="submit">🪑</button>
+        </form>
+    </div>
+    
+    <!-- Dark Overlay -->
+    <div id="agenda-overlay" style="display: none;"></div>
+
+
+    <script>
+        async function generateLocationButtons() {
+            try {
+                const response = await fetch("http://localhost:5001/api/google-calendar");
+                const data = await response.json();
+                let locations = Object.keys(data);
+                
+                locations = locations.map(location => location.replace(/, France$/, ""));
+
+                console.log("🔎 Locations received from API (filtered):", locations);
+
+                const locationButtonsContainer = document.getElementById("location-buttons");
+                locationButtonsContainer.innerHTML = "";
+
+                locations.forEach((location, index) => {
+                    let button = document.createElement("button");
+                    button.className = "location-btn";
+                    button.dataset.location = location;
+                    button.textContent = location;
+                    
+                    button.addEventListener("click", async function () {
+                        document.querySelector(".location-buttons").classList.add("active");
+                        document.querySelectorAll(".location-btn").forEach((btn, i) => {
+                            btn.classList.remove("active", "above", "below");
+                            btn.classList.add("inactive");
+                            if (i < index) btn.classList.add("above");
+                            if (i > index) btn.classList.add("below");
+                        });
+                        button.classList.add("active");
+                        button.classList.remove("inactive");
+                        await fetchAndDisplayEvents(location); // ✅ Load the UI first
+                        await fetchBookings(); // ✅ THEN apply booking status
+                    });
+
+                    locationButtonsContainer.appendChild(button);
+                });
+            } catch (error) {
+                console.error("❌ Error fetching locations:", error);
+            }
+        }
+
+        async function fetchAndDisplayEvents(location) {
+    try {
+        const response = await fetch("http://localhost:5001/api/google-calendar");
+        let data = await response.json();
+
+        let fullLocation = location + ", France";
+        let events = data[fullLocation] || [];
+
+        console.log("📅 Événements reçus pour", fullLocation, ":", events);
+
+        if (!Array.isArray(events)) {
+            console.error("❌ Problème : `events` n'est pas un tableau !", events);
+            events = [];
+        }
+
+        const now = new Date();
+        events = events.filter(event => new Date(event.date) > now);
+
+        let container = document.getElementById("availability-container");
+        let existingTable = container.querySelector("table");
+
+        if (existingTable) {
+            existingTable.classList.remove("show");
+            existingTable.classList.add("hide");
+
+            setTimeout(() => {
+                container.innerHTML = generateTableHTML(events, location);
+                setTimeout(() => {
+                    container.querySelector("table").classList.add("show");
+                    fetchBookings(); // ✅ Fetch bookings AFTER UI update
+                }, 10);
+            }, 300);
+        } else {
+            container.innerHTML = generateTableHTML(events, location);
+            setTimeout(() => {
+                container.querySelector("table").classList.add("show");
+                fetchBookings(); // ✅ Fetch bookings AFTER UI update
+            }, 10);
+        }
+    } catch (error) {
+        console.error("❌ Erreur lors de la récupération des créneaux :", error);
+    }
+}
+
+function generateTableHTML(events, location) {
+    let slotsHTML = `
+        <table>
+            <tr>
+                <th><img src="./images/date.svg" alt="Date"></th>
+                <th><img src="./images/heure.svg" alt="Heure"></th>
+                <th></th>
+            </tr>
+    `;
+
+    events.forEach(event => {
+        let eventDate = new Date(event.date);
+        let formattedDate = event.date; // Already formatted from API
+let formattedTime = event.time;
+
+        const jours = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+        let dayName = jours[eventDate.getDay()];
+        let svgPath = `./images/${dayName}.svg`;
+
+        // Define status (default to "Libre")
+        let googleStatus = event.status || "Free"; // "Free" ou "Busy" de Google Calendar
+let mongoStatus = event.mongoStatus || "Libre"; // "Libre", "Pending", "Reserved" de MongoDB
+
+// On affiche en priorité le statut MongoDB si une réservation existe
+let status = mongoStatus !== "Libre" ? mongoStatus : googleStatus === "Busy" ? "Reserved" : "Libre";
+
+        
+
+        // Choose button class based on status
+        let buttonClass = status === "Libre" ? "available" : status === "En attente" ? "pending" : "reserved";
+
+        // Set the correct icons
+        let iconPath = status === "Libre"
+    ? "images/taitresalibre.svg"
+    : status === "Pending"
+    ? "images/traitresattente.svg"
+    : status === "Reserved"
+    ? "images/traitreserved.svg"
+    : googleStatus === "Busy"
+    ? "images/traitreserved.svg"
+    : "images/taitresalibre.svg";
+
+let hoverIconMap = {
+    "Libre": "images/bullefree.svg",
+    "Pending": "images/bullewaiting.svg",
+    "Reserved": "images/bullereserved.svg",
+    "Busy": "images/bullereserved.svg" // Ajout du statut Google Calendar
+};
+
+// ✅ Get the correct hover icon or fallback to an empty string
+let hoverIconPath = hoverIconMap[status] || "";
+
+        // Add the button in the table
+        slotsHTML += `
+    <tr>
+        <td><img src="${svgPath}" alt="${dayName}" width="30"> ${formattedDate}</td>
+        <td>${formattedTime}</td>
+        <td style="position: relative;">
+    <button class="slot-btn ${buttonClass}" data-date="${formattedDate}" data-time="${formattedTime}" data-location="${location}" onclick="openBookingForm(this)">
+        <img src="${iconPath}" class="default-icon" alt="Book">
+        <img src="${hoverIconPath}" class="hover-icon" alt="Hover">
+    </button>
+</td>
+    </tr>
+`;
+    });
+
+    slotsHTML += `</table>`;
+    return slotsHTML;
+}
+
+        document.addEventListener("DOMContentLoaded", generateLocationButtons);
+
+        async function fetchBookings() {
+    try {
+        let response = await fetch("http://localhost:5001/api/agenda/slots");
+        let data = await response.json();
+
+        console.log("📩 Received bookings from MongoDB:", data);
+
+        if (data.success !== false && data.slots.length > 0) {
+            data.slots.forEach(booking => {
+                let status = booking.status || "Libre"; // ✅ Ensure "Libre" is set if missing
+                
+                console.log(`🟢 Updating UI for: ${booking.date} ${booking.time} @ ${booking.location} → ${status}`);
+                
+                updateSlotStatus(booking.date, booking.time, booking.location, status);
+            });
+        }
+
+        return data.slots;
+    } catch (error) {
+        console.error("❌ Error fetching bookings:", error);
+        return [];
+    }
+}
+
+
+        async function fetchSlotStatus(date, time, location) {
+    try {
+        const response = await fetch(`/api/agenda/slots`);
+        const data = await response.json();
+        const slot = data.slots.find(s => s.date === date && s.time === time && s.location === location);
+        return slot ? slot.status : "Libre";
+    } catch (error) {
+        console.error("❌ Error fetching slot status:", error);
+        return "Libre";
+    }
+}
+
+
+// Handle slots status in mongoDB
+async function bookSlot(button) {
+    let status = button.classList.contains("available") ? "Libre" 
+                : button.classList.contains("pending") ? "Pending" 
+                : "Réservé";
+
+    if (status === "Réservé") {
+        alert("⛔ This slot is already reserved. You cannot book it.");
+        return;
+    }
+
+    let date = button.dataset.date;
+    let time = button.dataset.time;
+    let location = button.dataset.location;
+
+    const user = prompt("Enter your email to book this slot:");
+
+    if (!user) {
+        alert("Booking cancelled.");
+        return;
+    }
+
+    try {
+        let response = await fetch(`/api/agenda/book`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date, time, location, user, status: "Pending" }) // Removed 'project' if not needed
+        });
+
+        let result = await response.json();
+        if (response.ok) {
+            if (status === "Pending") {
+                alert("📝 You have been added to the waitlist! If a spot opens, you'll be notified.");
+            } else {
+                alert("✅ Your booking is confirmed!");
+            }
+            button.classList.remove("available");
+            button.classList.add("pending");
+        } else {
+            alert(`❌ Booking failed: ${result.message}`);
+        }
+    } catch (error) {
+        console.error("❌ Error booking slot:", error);
+    }
+}
+
+
+
+ // Form
+ function openBookingForm(button) {
+    let status = button.classList.contains("reserved") ? "Reserved" 
+                : button.classList.contains("pending") ? "Pending" 
+                : "Libre";
+
+    // ⛔ Prevent opening the form for "Reserved" slots
+    if (status === "Reserved") {
+        alert("⛔ This slot is already reserved. You cannot book it.");
+        return;
+    }
+
+    // ✅ Allow "Libre" and "Pending" slots to open the form
+    document.getElementById("booking-form-container").style.display = "block";
+    document.getElementById("agenda-overlay").style.display = "block";
+
+    document.getElementById("date").value = button.dataset.date;
+    document.getElementById("time").value = button.dataset.time;
+    document.getElementById("location").value = button.dataset.location;
+
+    // ✅ Change submit button text for "Pending" slots
+    let submitButton = document.querySelector("#booking-form button[type='submit']");
+    submitButton.innerText = status === "Pending" ? "Join Waitlist" : "🪑";
+}
+
+// Link Form Submission to Backend
+document.getElementById("booking-form").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    let date = document.getElementById("date").value;
+    let time = document.getElementById("time").value;
+    let location = document.getElementById("location").value;
+    let email = document.getElementById("email").value;
+    let projectField = document.getElementById("project-description");
+    let project = projectField ? projectField.value : "Not provided";
+
+    // ✅ Get the button status
+    let selectedSlot = document.querySelector(`.slot-btn[data-date="${date}"][data-time="${time}"][data-location="${location}"]`);
+    let status = selectedSlot ? selectedSlot.classList.contains("reserved") ? "Reserved" : selectedSlot.classList.contains("pending") ? "Pending" : "Libre" : "Libre";
+
+    // ⛔ Prevent form submission if status is "Reserved"
+    if (status === "Reserved") {
+        alert("⛔ This slot is already reserved. You cannot send a booking request.");
+        return;
+    }
+
+    console.log("📤 Sending booking request:", { date, time, location, user: email });
+
+    try {
+        let response = await fetch(`http://localhost:5001/api/agenda/book`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date, time, location, user: email, project, status: "Pending" })
+        });
+
+        let result = await response.json();
+        console.log("📩 Server response:", result);
+        if (response.ok) {
+    if (status === "Pending") {
+        alert("📝 You have been added to the waitlist! If a spot opens, you'll be notified.");
+    } else {
+        alert("✅ Your booking is confirmed!");
+    }
+
+    // ✅ Update Slot Status in UI
+    updateSlotStatus(date, time, location, "Pending");
+
+    // ✅ Close the booking form
+    document.getElementById("booking-form-container").style.display = "none";
+    document.getElementById("agenda-overlay").style.display = "none";
+    document.body.classList.remove("dimmed");
+
+    // ✅ Fetch latest bookings to refresh UI
+    await fetchBookings();
+} else {
+    alert(`❌ Booking failed: ${result.message}`);
+}
+    } catch (error) {
+        console.error("❌ Booking error:", error);
+    }
+});
+// Close form when clicking outside
+document.getElementById("agenda-overlay").addEventListener("click", function () {
+    document.getElementById("booking-form-container").style.display = "none";
+    document.getElementById("agenda-overlay").style.display = "none";
+    document.body.classList.remove("dimmed");
+});
+
+// Update after submitting free to pending
+function updateSlotStatus(date, time, location, newStatus) {
+    document.querySelectorAll(".slot-btn").forEach(button => {
+        if (button.dataset.date === date && button.dataset.time === time && button.dataset.location === location) {
+            button.classList.remove("available", "pending", "reserved");
+
+            console.log(`🔄 Updating UI for slot: ${date} ${time} @ ${location} → ${newStatus}`);
+
+            let iconPath, hoverIconPath;
+            if (newStatus === "Libre") {
+                iconPath = "images/taitresalibre.svg";
+                hoverIconPath = "images/bullefree.svg";
+                button.classList.add("available");
+                button.disabled = false;
+            } else if (newStatus === "Pending") {
+                iconPath = "images/traitresattente.svg";
+                hoverIconPath = "images/bullewaiting.svg";
+                button.classList.add("pending");
+                button.disabled = false; // ❌ Disable pending slots
+            } else {
+                iconPath = "images/traitreserved.svg";
+                hoverIconPath = "images/bullereserved.svg";
+                button.classList.add("reserved");
+                button.disabled = true; // ❌ Disable reserved slots
+            }
+
+            button.innerHTML = `
+                <img src="${iconPath}" class="default-icon" alt="${newStatus}">
+                <img src="${hoverIconPath}" class="hover-icon" alt="Hover">
+            `;
+        }
+    });
+}
+
+function displayBookings(bookings) {
+    console.log("📌 Displaying bookings in UI:", bookings);
+
+    bookings.forEach(booking => {
+        updateSlotStatus(booking.date, booking.time, booking.location, booking.status);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    fetchBookings(); // 🟢 Load existing bookings on page load
+});
+
+    </script>
+</body>
+</html>

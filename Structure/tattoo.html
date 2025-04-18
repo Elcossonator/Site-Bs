@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tattoo Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="tattoo-page" onload="window.scrollTo(0, 0)">
+    <div id="overlay" class="hidden"></div>
+    <main class="scroll-split-screen">
+        <!-- Les images seront insérées dynamiquement ici -->
+    </main>
+    <script>
+        const gallery = document.querySelector('.scroll-split-screen');
+        const overlay = document.getElementById('overlay');
+        const imagesPerFolder = 18; // Nombre total d'images
+
+        for (let i = 1; i <= imagesPerFolder; i++) {
+            const img = document.createElement('div');
+            img.className = 'split-item';
+            img.style.backgroundImage = `url('images/portfolio/tattoo/image${i}.jpg')`;
+            gallery.appendChild(img);
+        }
+
+        // Gérer le clic sur les images et l'overlay
+        gallery.addEventListener('click', (e) => {
+            const target = e.target;
+
+            if (target.classList.contains('split-item')) {
+                if (target.classList.contains('active')) {
+                    resetImages();
+                } else {
+                    resetImages(); // Réinitialise d'abord toutes les images
+                    target.classList.add('active'); // Agrandit l'image cliquée
+                    overlay.classList.remove('hidden'); // Affiche l'overlay
+                    gallery.querySelectorAll('.split-item').forEach(item => {
+                        if (item !== target) {
+                            item.classList.add('dimmed');
+                        }
+                    });
+                }
+            }
+        });
+
+        overlay.addEventListener('click', () => {
+            resetImages();
+        });
+
+        // Fonction pour réinitialiser les états
+        function resetImages() {
+            gallery.querySelectorAll('.split-item').forEach(item => {
+                item.classList.remove('active', 'dimmed');
+            });
+            overlay.classList.add('hidden'); // Cache l'overlay
+        }
+    </script>
+
+    
+</body>
+</html>

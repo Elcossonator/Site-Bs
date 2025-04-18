@@ -1,0 +1,565 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: white; /* Fond blanc */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    overflow: hidden; /* Évite le défilement si des éléments débordent */
+}
+
+
+
+
+
+
+
+/* Pages: Accueil / Portfolio + Reglages SVG et Anim clic  */
+
+.container {
+    display: flex;
+    justify-content: space-around; /* Space between buttons */
+    align-items: center;
+    width: 70%; /* Adjust container width */
+    margin: 0 auto; /* Center the container horizontally */
+}
+
+.button {
+    position: relative;
+    flex: 1;
+    padding: 20px;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out; /* Animation fluide pour l'opacité */
+    z-index: 3;
+    cursor: pointer;
+    height: 100%; /* La hauteur des boutons suit la hauteur définie pour le conteneur */
+    box-sizing: ; /* Assure que la marge et le padding n'affectent pas la hauteur totale */
+}
+
+/* Image par défaut (SVG bouton) */
+.default-img {
+    width: 10vw;
+    height: auto;
+    transform: scale(2); /* Agrandit en permanence à 103% */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; /* Animation fluide pour l'opacité */
+    z-index: 7; /* Au-dessus des images de survol */
+    position: relative; /* Assure sa superposition au hover-img */
+    
+}
+
+/* Conteneur du SVG */
+.svg-container {
+    display: inline-block; /* Garde le SVG dans sa propre boîte */
+    width: 100%; /* Taille de base liée au parent */
+    height: 100%;
+    transform-origin: center; /* Transformation centrée */
+    transition: transform 0.3s ease-in-out; /* Animation fluide */
+}
+
+/* SVG à l'intérieur du conteneur */
+.default-img {
+    width: 10vw;
+    height: auto; /* Garde les proportions */
+    pointer-events: none; /* Désactive les interactions avec le SVG directement */
+}
+
+.button.hidden {
+    opacity: 0; /* Rend le bouton transparent */
+    pointer-events: none; /* Désactive les clics */
+    transition: opacity 0.3s ease-in-out; /* Transition fluide pour la disparition */
+}
+
+/* Rendre les autres boutons transparents lors du survol d'un bouton */
+.container:hover .button {
+    opacity: 0.15; /* Tous les boutons deviennent semi-transparents */
+}
+
+.container .button:hover {
+    opacity: 1; /* Seul le bouton survolé reste complètement opaque */
+}
+
+/* Effet d'agrandissement et opacité au survol */
+.button:hover .default-img {
+    transform: scale(3.3); /* Agrandit légèrement l'image */
+    opacity: 1; /* Change l’opacité de l’image par défaut */
+}
+
+/* Image de survol */
+.hover-img {
+    position: fixed; /* Fixée pour occuper tout l'écran */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Largeur complète */
+    height: 100vh; /* Hauteur complète */
+    object-fit: cover; /* Adapte sans déformer */
+    z-index: 1; /* Derrière les boutons */
+    opacity: 0; /* Invisible par défaut */
+    pointer-events: none; /* Évite les interactions avec l'image */
+    transition: opacity 0.3s ease-in-out; /* Animation fluide pour l'opacité */
+}
+
+/* Affiche et modifie l’opacité de l'image de survol */
+.button:hover .hover-img {
+    opacity: 0.2; /* Rendu semi-transparent lors du survol */
+    z-index: 1; /* Reste derrière les boutons */
+}
+
+.animation-container {
+    position: absolute;
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    display: none; /* Masque le GIF par défaut */
+    z-index: 10; /* Au-dessus des autres éléments */
+}
+
+.animation-container.active {
+    display: block; /* Visible quand la classe active est ajoutée */
+}
+
+.portfolio-animation {
+    width: 20vw; /* Taille du GIF, ajustez selon vos besoins */
+    height: 700px;
+    object-fit: cover;
+}
+
+/* Boutons spécifiques (Portfolio, Shop, Next Guest) */
+.button {
+    position: relative;
+    margin: 0 20px; /* Ajuste l'espacement entre les boutons */
+    cursor: pointer;
+    z-index: 10;
+}
+
+.default-img {
+    width: 100%; /* Les boutons conservent leurs styles habituels */
+    height: auto;
+}
+
+
+
+
+        /* Where is chair */
+
+/* Bloc où se trouve whereischair */
+
+
+#whereischair {
+    position: absolute;
+    bottom: 10%; /* Centré sous Shop */
+    align-items: center; /* Center buttons horizontally */
+    scale: 190%;
+    z-index: 17;
+    cursor: pointer; /* Garde l'apparence d'un clic */
+}
+
+
+
+#chair {
+    position: absolute;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 20; /* Met au-dessus des autres boutons */
+    cursor: pointer; /* Garde l'apparence d'un clic */
+    width: 100px;
+    transform-origin: center; /* Point de transformation centré */
+    transition: top 0.03s ease, left 0.03s ease, transform 0.03s ease;
+}
+
+@keyframes growAndMove {
+    0% {
+        transform: scale(1); /* Taille normale */
+    }
+    50% {
+        transform: scale(1.5) translateY(-20px); /* Agrandissement vers le haut */
+    }
+    100% {
+        transform: scale(1); /* Retour à la taille normale */
+    }
+}
+
+#chair.animate {
+    animation: growAndMove 0.2s ease-in-out; /* Durée et easing */
+}
+
+#chair, #whereischair img {
+    width: 8vw; /* Taille relative à la largeur de l'écran */
+    height: auto; /* Conserve les proportions */
+    max-width: 120px; /* Limite la taille maximale */
+    min-width: 60px; /* Définit une taille minimale */
+    cursor: pointer;
+}
+
+
+/* Pour les tablettes */
+@media (max-width: 768px) {
+    .portfolio-animation {
+        width: 30vw; /* Augmente la taille pour les écrans moyens */
+        max-width: 500px; /* Réduit la taille maximale */
+    }
+
+     #whereischair img {
+            width: 20vw; /* Slightly larger for tablets */
+            max-width: 120px; /* Moderate size for tablet screens */
+     }
+
+     /* Désactiver l'effet hover */
+    .button:hover .default-img {
+        transform: none; /* Annuler l'agrandissement */
+        opacity: 1; /* Annuler les modifications d'opacité */
+    }
+
+    .button:hover .hover-img {
+        opacity: 0; /* Rendre l'image de fond invisible */
+    }
+    
+    /* Désactiver l'effet global sur les boutons */
+    .container:hover .button {
+        opacity: 1; /* Tous les boutons restent visibles */
+    }
+}
+
+/* Pour les mobiles */
+@media (max-width: 480px) {
+    .container {
+        flex-direction: column; /* Stack buttons vertically */
+        align-items: center; /* Center buttons horizontally */
+        gap: 60px;
+        width: 170%; /* Adjust container width */
+        margin: 0 auto; /* Center container */
+        gap: 10px; /* Add consistent spacing between buttons */
+    
+    }
+
+    .button {
+        width: 40%; /* Reduce button width */
+        max-width: 300px; /* Limit button size for smaller screens */
+        padding: 10px; /* Adjust padding for smaller buttons */
+        margin: 0 auto; /* Center buttons within the container */
+    }
+
+    .default-img {
+        width: 100%; /* Adjust image size for better fit */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+
+    .portfolio-animation {
+        width: 10vw; /* Augmente la taille pour les écrans moyens */
+        max-width: 200px; /* Réduit la taille maximale */
+    }
+    #whereischair {
+        rotate: -90deg;
+        left: 5%;
+
+    }
+
+
+    /* Désactiver l'effet hover */
+    .button:hover .default-img {
+        transform: none; /* Annuler l'agrandissement */
+        opacity: 1; /* Annuler les modifications d'opacité */
+    }
+
+    .button:hover .hover-img {
+        opacity: 0; /* Rendre l'image de fond invisible */
+    }
+    
+    /* Désactiver l'effet global sur les boutons */
+    .container:hover .button {
+        opacity: 1; /* Tous les boutons restent visibles */
+    }
+}
+
+
+
+
+
+
+
+/* Pages: Tattoo / Bijoux / Artwork */
+
+/* Conteneur principal pour le split screen */
+.scroll-split-screen {
+    display: flex;
+    flex-wrap: wrap; /* Empile les éléments verticalement */
+    width: 100%; /* Prend toute la largeur de l'écran */
+    min-height: 100vh; /* Assure une hauteur minimale */
+    height: auto;
+    overflow-y: auto; /* Active le défilement vertical */
+    overflow-x: hidden; /* Empêche le scroll horizontal */
+    margin: 0; /* Supprime toutes les marges */
+    padding: 0; /* Supprime les paddings */
+    scroll-snap-type: y mandatory; /* Scroll automatique aligné sur chaque écran */
+}
+
+/* Pages spécifiques */
+.tattoo-page,
+.bijoux-page,
+.artwork-page {
+    overflow-y: auto; /* Active le défilement vertical */
+    overflow-x: hidden; /* Empêche le défilement horizontal */
+    height: 100vh; /* Prend toute la hauteur de la fenêtre */
+}
+
+/* Style des éléments individuels */
+.split-item {
+    width: 33%; /* Chaque élément occupe la moitié de la largeur de l'écran */
+    height: 50vh; /* Chaque élément occupe la moitié de la hauteur de l'écran */
+    background-size: cover; /* Remplit chaque cellule avec l'image */
+    background-position: center; /* Centre l'image */
+    background-repeat: no-repeat; /* Évite la répétition des images */
+    scroll-snap-align: start; /* Aligne chaque écran correctement au défilement */
+    z-index: 1; /* Les images restent derrière par défaut */
+    margin: 0; /* Supprime les marges internes */
+    padding: 0; /* Supprime les paddings internes */
+    box-sizing: border-box; /* Assure que les paddings n'affectent pas la taille totale */
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out; /* Transition fluide */
+}
+
+/* Effet au survol */
+.split-item:hover {
+    transform: scale(1.05); /* Agrandit légèrement l'image */
+}
+
+/* Effet global lorsque l'une des images est active */
+.scroll-split-screen .split-item.dimmed {
+    opacity: 0.7; /* Rend toutes les autres images semi-transparentes */
+}
+
+/* Image active (cliquée) */
+.split-item.active {
+    transform: scale(1.3); /* Centre et agrandit */
+    position: fixed; /* Permet de sortir de la grille et centrer l'image */
+    top: calc(50% - 25vh); /* Centre verticalement en tenant compte de sa hauteur */
+    left: calc(50% - 16.5%); /* Centre horizontalement en tenant compte de sa largeur */
+    z-index: 10; /* Met au-dessus des autres éléments */
+    opacity: 1; /* Pleine opacité */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.split-item.returning {
+    transform: scale(1); /* Retourne à sa taille d'origine */
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out; /* Transition fluide */
+    transform: translate(0%, 0%) scale(1); /* Centre et agrandit */
+    position: relative; /* Retourne à la position dans la grille */
+    z-index: 1;
+}
+
+/* Autoriser uniquement le défilement vertical pour tattoo.html */
+.tattoo-page {
+    overflow-y: auto; /* Active le défilement vertical */
+    overflow-x: hidden; /* Désactive le défilement horizontal */
+    height: 100vh; /* Prend toute la hauteur de la fenêtre */
+}
+
+/* Autoriser uniquement le défilement vertical pour d'autres pages */
+.artwork-page {
+    overflow-y: auto; /* Active le défilement vertical */
+    overflow-x: hidden; /* Désactive le défilement horizontal */
+    height: 100vh;
+}
+
+/* Autoriser uniquement le défilement vertical pour d'autres pages */
+.bijoux-page {
+    overflow-y: auto; /* Active le défilement vertical */
+    overflow-x: hidden; /* Désactive le défilement horizontal */
+    height: 100vh;
+}
+
+.artwork-page, .bijoux-page, .tattoo-page {
+    display: flex;
+    flex-direction: column; /* Aligne les enfants verticalement */
+    align-items: center; /* Centrage horizontal */
+    justify-content: flex-start; /* Aligne les éléments au haut */
+    min-height: 100vh; /* Assure une hauteur d'écran minimale */
+}
+
+/* Overlay pour bloquer les clics en arrière-plan */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Couleur semi-transparente */
+    mix-blend-mode: multiply; /* Fusionne avec les éléments en dessous */
+    z-index: 8; /* Juste derrière l'image agrandie */
+    display: block;
+    opacity: 0; /* Invisible par défaut */
+    transition: opacity 0.3s ease;
+}
+
+/* Afficher l'overlay */
+#overlay:not(.hidden) {
+    opacity: 1;
+    pointer-events: all; /* Permet le clic */
+}
+
+/* Cacher l'overlay */
+#overlay.hidden {
+    pointer-events: none; /* Désactive les clics */
+    opacity: 0; /* Rend l'overlay invisible */
+}
+
+
+
+
+/* Shop */
+
+/* Animation SVG d'introduction (Boutique) */
+#shop-intro {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1; /* Priorité sur les autres animations */
+    animation: shop-fade-in 0.8s ease, shop-move-out 0.7s ease 0.3s forwards;
+}
+
+#shop-svg {
+    width: 800px; /* Ajustez selon vos besoins */
+    height: auto;
+    animation: shop-appear 0.3s ease forwards;
+}
+
+@keyframes shop-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes shop-move-out {
+    from {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translate(-170%, -50%) scale(0.3);
+        opacity: 0;
+    }
+}
+
+/* Grille des produits */
+#shop-container {
+    display: flex; /* Masqué par défaut */
+    opacity: 0; /* Transparent */
+    transform: translateX(100%); /* Position décalée */
+    transition: transform 0.7s ease, opacity 0.7s ease;
+    height: 100vh; /* Prend toute la hauteur de l'écran */
+    overflow-y: auto; /* Active le défilement vertical */
+    overflow-x: hidden; /* Désactive le défilement horizontal */
+    padding: 20px; /* Espacement interne */
+    align-items: flex-start; /* Aligne les enfants en haut */
+    justify-content: flex-start; /* Commence la grille dès le haut */
+    
+}
+
+#shop-container.visible {
+    opacity: 1; /* Complètement opaque */
+    transform: translateX(0); /* Retour à la position normale */
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(500px, 1fr));
+    gap: 20px;
+    width: 100%;
+    padding: 0px;
+    overflow-y: auto;
+}
+
+.product-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card img {
+    width: 100%; /* Prend toute la largeur de la carte */
+    height: auto; /* Préserve les proportions */
+    max-height: 200px; /* Limite la hauteur si nécessaire */
+    object-fit: cover; /* Centre l’image dans sa carte */
+    border-radius: 4px; /* Coin arrondi pour un effet esthétique */
+}
+
+.product-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333; /* Couleur sombre */
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 16px;
+    color: #ff6f61; /* Couleur vive pour attirer l'attention */
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Panier */
+#cart-preview {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+#cart-details {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 30;
+}
+
+#cart-preview:hover #cart-details {
+    display: block;
+}
+
+
+/* Reponsive */ 
+
+
+
+    /* Agenda */
+
+/* Style pour les boutons d'événements */
+
+/* Style pour le tableau */
+
+
+
+.availability-table {
+
+}
+
+
+

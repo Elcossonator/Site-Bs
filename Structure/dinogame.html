@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runner Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #f9f9f9;
+        }
+        canvas {
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <canvas id="gameCanvas" width="1000" height="500"></canvas>
+    
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        const gameOverImg = new Image();
+gameOverImg.src = "images/gameover.svg"; // Adjust path if needed
+
+const scoreImg = new Image();
+scoreImg.src = "images/yourscore.svg"; // Adjust path if needed
+
+        const backgroundImg = new Image();
+        backgroundImg.src = "images/chairdecor.png";
+        
+        let backgroundX = 0; // Variable pour le défilement du décor
+
+        // Images pour la course
+        const playerFrames = [
+            "images/chaircourir1.gif",
+            "images/chaircourir2.gif",
+            "images/chaircourir3.gif",
+            "images/chaircourir4.gif",
+            "images/chaircourir5.gif",
+            "images/chaircourir6.gif"
+        ];
+        
+        // Images pour le saut
+        const jumpFrames = [
+            "images/chairjump1.gif",
+            "images/chairjump2.gif",
+            "images/chairjump3.gif",
+            "images/chairjump4.gif",
+            "images/chairjump5.gif",
+            "images/chairjump6.gif",
+            "images/chairjump7.gif",
+            "images/chairjump8.gif",
+            "images/chairjump9.gif",
+            "images/chairjump10.gif"
+        ];
+
+        let loadedFrames = [];
+        let loadedJumpFrames = [];
+        let frameIndex = 0;
+        let jumpFrameIndex = 0;
+        let frameRate = 2;
+        let gameSpeed = 12;
+        let score = 0;
+        let isGameOver = false;
+
+        for (let i = 0; i < playerFrames.length; i++) {
+            let img = new Image();
+            img.src = playerFrames[i];
+            loadedFrames.push(img);
+        }
+
+        for (let i = 0; i < jumpFrames.length; i++) {
+            let img = new Image();
+            img.src = jumpFrames[i];
+            loadedJumpFrames.push(img);
+        }
+
+        const scaleDecor = canvas.width / 4706;
+        const decorHeight = 1176 * scaleDecor;
+
+        const scalePlayer = 0.3;
+        const playerWidth = 581 * scalePlayer;
+        const playerHeight = 531 * scalePlayer;
+
+        const scaleJump = 0.33; // Homothétie pour le saut
+        const jumpWidth = 608 * scaleJump;
+        const jumpHeight = 765 * scaleJump;
+
+        function drawBackground() {
+    let bgWidth = backgroundImg.width * scaleDecor;
+    
+    // Calculate transparency based on score (higher score = more transparent)
+    let transparency = Math.max(0.2, 1 - score / 25); // Min opacity 0.2
+
+    // Set transparency
+    ctx.globalAlpha = transparency;
+    
+    // Draw the background with a trailing effect
+    ctx.drawImage(backgroundImg, backgroundX, canvas.height - decorHeight, bgWidth, decorHeight);
+    ctx.drawImage(backgroundImg, backgroundX + bgWidth, canvas.height - decorHeight, bgWidth, decorHeight);
+
+    // Restore default transparency for other elements
+    ctx.globalAlpha = 1.0;
+
+    // Move background for parallax effect
+    backgroundX -= gameSpeed / 1.7;
+
+    // Reset when first background image moves fully out of view
+    if (backgroundX <= -bgWidth) {
+        backgroundX = 0;
+    }
+}
+
+const scaleMirror = 0.5; // Ajuste la taille de la chaise
+
+const fallingChair = {
+    x: 160, // Même position X que le joueur
+    y: -200, // Bien en dehors de la zone de jeu, mais visible
+    width: 0, // Défini après chargement
+    height: 0,
+    velocityY: 0,
+    gravity: 0.5, // Vitesse de chute contrôlée
+    landed: false,
+    image: new Image()
+};
+
+// Charger l'image et récupérer la taille d'origine
+fallingChair.image.onload = function() {
+    fallingChair.width = this.naturalWidth * scaleMirror;
+    fallingChair.height = this.naturalHeight * scaleMirror;
+    
+};
+fallingChair.image.src = "images/chairmirror.svg"; // Met à jour le bon chemin
+
+
+function animateFallingChair() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBackground(); // Garde le décor visible
+
+    // Dessiner la chaise qui tombe au-dessus du canvas
+    if (!fallingChair.landed) {
+        ctx.drawImage(fallingChair.image, fallingChair.x, fallingChair.y, fallingChair.width, fallingChair.height);
+    }
+
+    // Appliquer la gravité pour la faire descendre
+    fallingChair.velocityY += fallingChair.gravity;
+    fallingChair.y += fallingChair.velocityY;
+
+    // Arrêter la chute quand elle atteint la position du joueur
+    if (fallingChair.y >= canvas.height - fallingChair.height - 40) {
+        fallingChair.y = canvas.height - fallingChair.height - 40;
+        fallingChair.landed = true;
+
+        setTimeout(() => {
+            startGame(); // Lancer le jeu après l'atterrissage
+        }, 20);
+    } else {
+        requestAnimationFrame(animateFallingChair);
+    }
+}
+
+function startGame() {
+    console.log("Chair landed! Starting game...");
+    fallingChair.landed = false; // Cache la chaise après la chute
+    gameLoop(); // Démarre le jeu
+    spawnObstacle(); // Active les obstacles
+}
+
+        const gravity = 1.13; // Lower gravity for a smoother jump
+const jumpForce = -1; // Initial jump force, adjust for desired jump height
+
+const player = {
+    x: 100,
+    y: canvas.height - playerHeight - 40,
+    width: playerWidth,
+    height: playerHeight,
+    velocityY: 0,
+    jumping: false,
+    draw() {
+        drawPlayer();
+    },
+    update() {
+        if (this.jumping) {
+            this.velocityY += gravity; // Apply smoother gravity
+            this.y += this.velocityY;
+            
+            // Ensure the character does not sink too low
+            if (this.y >= canvas.height - this.height - 40) {
+                this.y = canvas.height - this.height - 40;
+                this.jumping = false;
+                jumpFrameIndex = 0;
+                jumpFrameCounter = 0; // Reset animation when landing
+                frameIndex = 0; // Reset running animation
+            }
+        }
+    }
+};
+
+const obstacles = [];
+const obstacleImg = new Image();
+obstacleImg.src = "images/obstacle.png"; // Replace with your actual obstacle image
+
+function spawnObstacle() {
+    let obstacleSize = 40; // Adjust size if needed
+    obstacles.push({
+        x: canvas.width,
+        y: canvas.height - obstacleSize - 45,
+        width: obstacleSize,
+        height: obstacleSize,
+    });
+
+    // Set the next spawn time randomly between 1000ms and 2500ms
+    let nextSpawnTime = Math.random() * (4000 - 1500) + 1000;
+    
+    // Recursively call itself to ensure continuous spawning
+    setTimeout(spawnObstacle, nextSpawnTime);
+}
+
+        const jumpDuration = 30; // Number of frames the jump animation lasts
+        let jumpFrameCounter = 0; // Counter to track animation time
+        let baseFrameRate = 2.5; // Initial speed (slower animation)
+const minFrameRate = 0.4; // Maximum speed (fastest animation)
+const maxJumps = 40; // Number of jumps to reach max speed
+let jumpCount = 0; // Track the number of jumps
+
+document.addEventListener("keydown", (e) => {
+    if (e.code === "Space" && !player.jumping) {
+        player.velocityY = -20;
+        player.jumping = true;
+        jumpFrameIndex = 0;
+
+        // Increase speed after each jump
+        if (jumpCount < maxJumps) {
+            jumpCount++;
+            baseFrameRate = 2 - ((2 - minFrameRate) * (jumpCount / maxJumps)); 
+        }
+    }
+});
+
+
+
+function drawPlayer() {
+    if (player.jumping) {
+        if (jumpFrameCounter < jumpDuration) {
+            jumpFrameCounter++;
+        }
+
+        let currentJumpFrame;
+        if (jumpFrameCounter >= jumpDuration) {
+            currentJumpFrame = jumpFrames.length - 1; // Stay on last frame
+        } else {
+            currentJumpFrame = Math.floor((jumpFrameCounter / jumpDuration) * jumpFrames.length);
+        }
+
+        ctx.drawImage(loadedJumpFrames[currentJumpFrame], player.x, player.y, jumpWidth, jumpHeight);
+    } else {
+        // Adjust frame rate dynamically based on jump count
+        let runningFrameRate = baseFrameRate;
+
+        frameIndex = (frameIndex + 0.2) % (playerFrames.length * runningFrameRate);
+        let currentFrame = Math.floor(frameIndex / runningFrameRate);
+        ctx.drawImage(loadedFrames[currentFrame], player.x, player.y, player.width, player.height);
+    }
+}
+
+function gameLoop() {
+    if (isGameOver) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear screen before displaying Game Over
+        drawBackground(); // Keep background visible
+
+        // Preserve aspect ratio of "Game Over" image
+        let originalWidth = gameOverImg.naturalWidth;
+        let originalHeight = gameOverImg.naturalHeight;
+        let scaleFactor = 1.3; // Adjust scale
+        let newWidth = originalWidth * scaleFactor;
+        let newHeight = originalHeight * scaleFactor;
+
+        // Center the "Game Over" image
+        let xPos = (canvas.width - newWidth) / 2;
+        let yPos = (canvas.height - newHeight) / 3; // Higher on screen
+
+        // Draw "Game Over" image
+        ctx.drawImage(gameOverImg, xPos, yPos, newWidth, newHeight);
+
+        // Preserve aspect ratio of "Score" image
+        let scoreOriginalWidth = scoreImg.naturalWidth;
+        let scoreOriginalHeight = scoreImg.naturalHeight;
+
+        let scoreScaleFactor = 0.33; // Adjust scale
+        let scoreNewWidth = scoreOriginalWidth * scoreScaleFactor;
+        let scoreNewHeight = scoreOriginalHeight * scoreScaleFactor;
+
+        // Center the "Score" image below "Game Over"
+        let scoreImgX = (canvas.width - scoreNewWidth) / 2;
+        let scoreImgY = yPos + newHeight + 20; // Position below "Game Over"
+
+        ctx.drawImage(scoreImg, scoreImgX, scoreImgY, scoreNewWidth, scoreNewHeight);
+
+        // Draw the actual score number below the image
+        ctx.fillStyle = "black";
+        ctx.font = "30px Arial";
+        ctx.fillText(score, scoreImgX + scoreNewWidth + 10, scoreImgY + scoreNewHeight / 2 + 10);
+
+        return; // Stop the game
+    }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBackground();
+            player.update();
+            updateObstacles(); // Update obstacle positions
+            checkCollision(); // Check if player collides with obstacles
+            player.draw();
+            drawObstacles(); // Draw obstacles
+            player.draw();
+            ctx.fillStyle = "black";
+            ctx.fillText("Score: " + score, 20, 30);
+            gameSpeed += 0.015;
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updateObstacles() {
+    for (let i = 0; i < obstacles.length; i++) {
+        obstacles[i].x -= gameSpeed/1.5; // Move obstacles with the game speed
+
+        // Remove obstacles that go off-screen
+        if (obstacles[i].x + obstacles[i].width < 0) {
+            obstacles.splice(i, 1);
+            score++; // Increase score for each obstacle avoided
+        }
+    }
+}
+
+function drawObstacles() {
+    for (let obs of obstacles) {
+        ctx.drawImage(obstacleImg, obs.x, obs.y, obs.width, obs.height);
+    }
+}
+
+function checkCollision() {
+    for (let obs of obstacles) {
+        if (
+            player.x < obs.x + obs.width &&
+            player.x + player.width > obs.x &&
+            player.y < obs.y + obs.height &&
+            player.y + player.height > obs.y
+        ) {
+            isGameOver = true;
+        }
+    }
+}
+
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Space" && !player.jumping) {
+                player.velocityY = -20;
+                player.jumping = true;
+                jumpFrameIndex = 0;
+            }
+        });
+
+        window.onload = function() {
+    console.log("Démarrage du jeu avec l'animation de chute...");
+    animateFallingChair(); // Start falling animation
+};
+    </script>
+</body>
+</html>
