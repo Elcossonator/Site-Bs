@@ -59,11 +59,8 @@ if (!MONGO_URI) {
 }
 
 mongoose
-    .connect(MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 5000,
-    })
+mongoose
+.connect(MONGO_URI)
     .then(() => {
         const db = mongoose.connection.useDb("bookingDB");
         console.log("✅ Connected to MongoDB - Using Database:", db.name);
