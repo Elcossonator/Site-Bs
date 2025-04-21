@@ -296,6 +296,9 @@ body.dimmed #next-guest-container > *:not(#booking-form-container):not(#agenda-o
 
 
     <script>
+
+const API_BASE_URL = "https://site-bs.onrender.com";
+
         async function generateLocationButtons() {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/google-calendar`);
@@ -592,11 +595,11 @@ document.getElementById("booking-form").addEventListener("submit", async functio
     console.log("📤 Sending booking request:", { date, time, location, user: email });
 
     try {
-        let response = await fetch(`http://localhost:5001/api/agenda/book`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ date, time, location, user: email, project, status: "Pending" })
-        });
+        let response = await fetch(`${API_BASE_URL}/api/agenda/book`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ date, time, location, user: email, project, status: "Pending" })
+});
 
         let result = await response.json();
         console.log("📩 Server response:", result);
