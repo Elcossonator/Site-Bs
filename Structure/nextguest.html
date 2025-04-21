@@ -457,21 +457,15 @@ let hoverIconPath = hoverIconMap[status] || "";
 
         async function fetchBookings() {
     try {
-        let response = await fetch(`${API_BASE_URL}/api/agenda/book`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date, time, location, user: email, project, status: "Pending" })
-  });
+        let response = await fetch(`${API_BASE_URL}/api/agenda/book`);
         let data = await response.json();
 
         console.log("📩 Received bookings from MongoDB:", data);
 
         if (data.success !== false && data.slots.length > 0) {
             data.slots.forEach(booking => {
-                let status = booking.status || "Libre"; // ✅ Ensure "Libre" is set if missing
-                
+                let status = booking.status || "Libre";
                 console.log(`🟢 Updating UI for: ${booking.date} ${booking.time} @ ${booking.location} → ${status}`);
-                
                 updateSlotStatus(booking.date, booking.time, booking.location, status);
             });
         }
@@ -594,7 +588,7 @@ document.getElementById("booking-form").addEventListener("submit", async functio
     console.log("📤 Sending booking request:", { date, time, location, user: email });
 
     try {
-        let response = await fetch(`${API_BASE_URL}/api/agenda/bookings`);
+        let response = await fetch(`${API_BASE_URL}/api/agenda/book`);
 
         let result = await response.json();
         console.log("📩 Server response:", result);
