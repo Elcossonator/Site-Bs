@@ -341,7 +341,7 @@ const API_BASE_URL = "https://site-bs.onrender.com";
 
         async function fetchAndDisplayEvents(location) {
     try {
-        const response = await fetch("http://localhost:5001/api/google-calendar");
+        const response = await fetch('${API_BASE_URL}/api/google-calendar');
         let data = await response.json();
 
         let fullLocation = location + ", France";

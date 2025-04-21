@@ -8,7 +8,7 @@ import cors from "cors";
 import nodemailer from "nodemailer"; 
 import { getEventTypes, getAvailableSlots } from "./calendly.js";
 import fetch from "node-fetch";
-const REDIRECT_URI = const REDIRECT_URI = process.env.REDIRECT_URI;
+const REDIRECT_URI = "http://localhost:5001/oauth2callback";
 
 // ✅ Debug: Ensure ENV variables are loaded
 console.log("✅ Loaded ENV Variables:", process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_REFRESH_TOKEN);
