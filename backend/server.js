@@ -134,3 +134,9 @@ app.get("/oauth2callback", async (req, res) => {
         res.status(500).send("❌ Error exchanging auth code.");
     }
 });
+
+module.exports = router;
+
+router.get("/test", (req, res) => {
+    res.send("✅ Route OK");
+  });
