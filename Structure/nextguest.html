@@ -298,7 +298,7 @@ body.dimmed #next-guest-container > *:not(#booking-form-container):not(#agenda-o
     <script>
         async function generateLocationButtons() {
             try {
-                const response = await fetch("http://localhost:5001/api/google-calendar");
+                const response = await fetch(`${API_BASE_URL}/api/google-calendar`);
                 const data = await response.json();
                 let locations = Object.keys(data);
                 
@@ -455,7 +455,11 @@ let hoverIconPath = hoverIconMap[status] || "";
 
         async function fetchBookings() {
     try {
-        let response = await fetch("http://localhost:5001/api/agenda/slots");
+        let response = await fetch(`${API_BASE_URL}/api/agenda/book`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, time, location, user: email, project, status: "Pending" })
+  });
         let data = await response.json();
 
         console.log("📩 Received bookings from MongoDB:", data);
