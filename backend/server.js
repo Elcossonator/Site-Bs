@@ -8,7 +8,7 @@ import cors from "cors";
 import nodemailer from "nodemailer"; 
 import { getEventTypes, getAvailableSlots } from "./calendly.js";
 import fetch from "node-fetch";
-const REDIRECT_URI = "http://localhost:5001/oauth2callback";
+const REDIRECT_URI = "https://site-bs.onrender.com/oauth2callback";
 
 // ✅ Debug: Ensure ENV variables are loaded
 console.log("✅ Loaded ENV Variables:", process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_REFRESH_TOKEN);
@@ -113,7 +113,7 @@ app.get("/oauth2callback", async (req, res) => {
             body: new URLSearchParams({
                 client_id: process.env.GOOGLE_CLIENT_ID,
                 client_secret: process.env.GOOGLE_CLIENT_SECRET,
-                redirect_uri: "http://localhost:5001/oauth2callback",
+                redirect_uri: REDIRECT_URI,
                 grant_type: "authorization_code",
                 code: code,
             }),
