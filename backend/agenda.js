@@ -226,6 +226,7 @@ async function sendAdminBookingNotification(bookingDetails) {
 router.post("/book", async (req, res) => {
     try {
         console.log("📌 Received booking request:", req.body);
+        console.log("📩 Booking received on backend:", req.body);
 
         const { date, time, location, user, project, status } = req.body;
         if (!date || !time || !location || !user) {

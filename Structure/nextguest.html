@@ -514,11 +514,20 @@ async function bookSlot(button) {
     }
 
     try {
-        let response = await fetch(`/api/agenda/book`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ date, time, location, user, status: "Pending" }) // Removed 'project' if not needed
-        });
+        let response = await fetch(`${API_BASE_URL}/api/agenda/book`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        date,
+        time,
+        location,
+        user: email,
+        project,
+        status
+    }),
+});
 
         let result = await response.json();
         if (response.ok) {
