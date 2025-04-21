@@ -500,4 +500,24 @@ router.post("/stripe-webhook", express.raw({ type: "application/json" }), async 
     res.status(200).send("Webhook received!");
 });
 
+// ✅ Nouvelle route pour fetch les réservations (bookings) par lieu
+router.get("/bookings", async (req, res) => {
+    try {
+        const { location } = req.query;
+
+        if (!location) {
+            return res.status(400).json({ message: "❌ Location is required." });
+        }
+
+        const bookings = await Booking.find({ location });
+
+        console.log(`✅ Bookings fetched for ${location}:`, bookings);
+
+        res.json(bookings);
+    } catch (error) {
+        console.error("❌ Error fetching bookings:", error);
+        res.status(500).json({ message: "❌ Error fetching bookings.", error });
+    }
+});
+
 export default router;
