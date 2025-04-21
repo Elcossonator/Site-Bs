@@ -294,7 +294,6 @@ body.dimmed #next-guest-container > *:not(#booking-form-container):not(#agenda-o
     <!-- Dark Overlay -->
     <div id="agenda-overlay" style="display: none;"></div>
 
-
     <script>
 
 const API_BASE_URL = "https://site-bs.onrender.com";
@@ -341,7 +340,7 @@ const API_BASE_URL = "https://site-bs.onrender.com";
 
         async function fetchAndDisplayEvents(location) {
     try {
-        const response = await fetch('${API_BASE_URL}/api/google-calendar');
+        const response = await fetch(`${API_BASE_URL}/api/google-calendar`);
         let data = await response.json();
 
         let fullLocation = location + ", France";
@@ -595,11 +594,7 @@ document.getElementById("booking-form").addEventListener("submit", async functio
     console.log("📤 Sending booking request:", { date, time, location, user: email });
 
     try {
-        let response = await fetch(`${API_BASE_URL}/api/agenda/book`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ date, time, location, user: email, project, status: "Pending" })
-});
+        let response = await fetch(`${API_BASE_URL}/api/agenda/bookings`);
 
         let result = await response.json();
         console.log("📩 Server response:", result);
