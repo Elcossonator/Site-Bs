@@ -9,6 +9,7 @@ import nodemailer from "nodemailer";
 import { getEventTypes, getAvailableSlots } from "./calendly.js";
 import fetch from "node-fetch";
 const REDIRECT_URI = "https://site-bs.onrender.com/oauth2callback";
+import agendaRoutes from "./routes/agenda.js";
 
 // ✅ Debug: Ensure ENV variables are loaded
 console.log("✅ Loaded ENV Variables:", process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_REFRESH_TOKEN);
@@ -139,4 +140,6 @@ module.exports = router;
 
 router.get("/test", (req, res) => {
     res.send("✅ Route OK");
-  });
+});
+
+export default router;

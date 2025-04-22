@@ -4,6 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import nodemailer from "nodemailer";
 import Stripe from "stripe";
+const router = express.Router();
 
 
 dotenv.config();
