@@ -93,6 +93,10 @@ app.get("/", (req, res) => {
     res.send("✅ Server is running!");
 });
 
+app.get("/api/agenda/test", (req, res) => {
+    res.status(200).json({ message: "API is working!" });
+  });
+
 // 📌 Start the server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on ${PORT}`);

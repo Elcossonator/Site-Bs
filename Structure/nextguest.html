@@ -457,7 +457,7 @@ let hoverIconPath = hoverIconMap[status] || "";
 
         async function fetchBookings() {
     try {
-        let response = await fetch(`${API_BASE_URL}/api/agenda/book`);
+        let response = await fetch(`${API_BASE_URL}/api/agenda/bookings`);
         let data = await response.json();
 
         console.log("📩 Received bookings from MongoDB:", data);
