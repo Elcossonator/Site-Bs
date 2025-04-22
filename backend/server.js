@@ -139,10 +139,6 @@ app.get("/oauth2callback", async (req, res) => {
     }
 });
 
-module.exports = router;
-
-router.get("/test", (req, res) => {
+app.get("/test", (req, res) => {
     res.send("✅ Route OK");
 });
-
-export default router;
