@@ -9,7 +9,6 @@ import nodemailer from "nodemailer";
 import { getEventTypes, getAvailableSlots } from "./calendly.js";
 import fetch from "node-fetch";
 const REDIRECT_URI = "https://site-bs.onrender.com/oauth2callback";
-import agendaRoutes from "./routes/agenda.js";
 
 // ✅ Debug: Ensure ENV variables are loaded
 console.log("✅ Loaded ENV Variables:", process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_REFRESH_TOKEN);
@@ -96,7 +95,7 @@ app.get("/", (req, res) => {
 
 // 📌 Start the server
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running on ${PORT}`);
 });
 
 // 📌 OAuth2 Callback Route
