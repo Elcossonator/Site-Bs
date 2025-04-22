@@ -12,7 +12,7 @@ console.log("✅ Loaded EMAIL_USER:", process.env.EMAIL_USER);
 console.log("✅ Loaded EMAIL_PASS:", process.env.EMAIL_PASS ? "******" : "MISSING!");
 console.log("✅ Loaded ADMIN_EMAIL:", process.env.ADMIN_EMAIL);
 
-const router = express.Router();
+
 
 // 📌 Booking Schema
 const bookingSchema = new mongoose.Schema({
