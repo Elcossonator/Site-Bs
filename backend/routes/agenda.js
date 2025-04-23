@@ -396,20 +396,23 @@ router.get("/slots", async (req, res) => {
             let key = `${booking.date}_${booking.time}_${booking.location}`;
             let googleStatus = busySlots.has(key) ? "Busy" : "Free";
         
-            // 🟥 Set Reserved only if Google says busy and we're Libre
+            // 🟦 If Google says BUSY and current status is Libre → upgrade to Reserved
             if (googleStatus === "Busy" && booking.status === "Libre") {
-                console.log(`🔄 Google says BUSY → Updating ${booking._id} to Reserved`);
-                await Booking.updateOne({ _id: booking._id }, { $set: { status: "Reserved", calendarStatus: "Busy" } });
+                console.log(`🔄 Google BUSY → ${booking._id} set to Reserved`);
                 booking.status = "Reserved";
+                booking.calendarStatus = "Busy";
+                await booking.save();
             }
         
-            // 🟩 Set Libre only if Google says free AND no user exists
+            // 🟨 If Google says FREE AND there's NO USER assigned → downgrade to Libre
             if (googleStatus === "Free" && booking.calendarStatus === "Busy" && !booking.user) {
-                console.log(`🔄 Google says FREE and no user → Reverting ${booking._id} to Libre`);
-                await Booking.updateOne({ _id: booking._id }, { $set: { status: "Libre", calendarStatus: "Free" } });
+                console.log(`🔄 Google FREE & no user → ${booking._id} set to Libre`);
                 booking.status = "Libre";
+                booking.calendarStatus = "Free";
+                await booking.save();
             }
         
+            // 🟥 Otherwise, preserve existing MongoDB status
             booking.googleStatus = googleStatus;
         }
 
