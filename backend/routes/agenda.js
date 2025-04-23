@@ -4,6 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import nodemailer from "nodemailer";
 import Stripe from "stripe";
+const router = express.Router();
 
 
 dotenv.config();
@@ -11,7 +12,7 @@ console.log("✅ Loaded EMAIL_USER:", process.env.EMAIL_USER);
 console.log("✅ Loaded EMAIL_PASS:", process.env.EMAIL_PASS ? "******" : "MISSING!");
 console.log("✅ Loaded ADMIN_EMAIL:", process.env.ADMIN_EMAIL);
 
-const router = express.Router();
+
 
 // 📌 Booking Schema
 const bookingSchema = new mongoose.Schema({
@@ -226,6 +227,7 @@ async function sendAdminBookingNotification(bookingDetails) {
 router.post("/book", async (req, res) => {
     try {
         console.log("📌 Received booking request:", req.body);
+        console.log("📩 Booking received on backend:", req.body);
 
         const { date, time, location, user, project, status } = req.body;
         if (!date || !time || !location || !user) {
@@ -498,6 +500,26 @@ router.post("/stripe-webhook", express.raw({ type: "application/json" }), async 
     }
 
     res.status(200).send("Webhook received!");
+});
+
+// ✅ Nouvelle route pour fetch les réservations (bookings) par lieu
+router.get("/bookings", async (req, res) => {
+    try {
+        const { location } = req.query;
+
+        if (!location) {
+            return res.status(400).json({ message: "❌ Location is required." });
+        }
+
+        const bookings = await Booking.find({ location });
+
+        console.log(`✅ Bookings fetched for ${location}:`, bookings);
+
+        res.json(bookings);
+    } catch (error) {
+        console.error("❌ Error fetching bookings:", error);
+        res.status(500).json({ message: "❌ Error fetching bookings.", error });
+    }
 });
 
 export default router;
