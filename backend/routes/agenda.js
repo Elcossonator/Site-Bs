@@ -396,7 +396,7 @@ router.get("/slots", async (req, res) => {
             let key = `${booking.date}_${booking.time}_${booking.location}`;
             let googleStatus = busySlots.has(key) ? "Busy" : "Free";
         
-            // Only set to Reserved if Libre and Google says Busy
+            // 🟥 If Google says BUSY and status is Libre → Reserve it
             if (googleStatus === "Busy" && booking.status === "Libre") {
                 console.log(`🔄 Google says BUSY → Setting ${booking._id} to Reserved`);
                 booking.status = "Reserved";
@@ -404,20 +404,23 @@ router.get("/slots", async (req, res) => {
                 await booking.save();
             }
         
-            // Only revert to Libre if Google says Free AND there's no user
-            if (googleStatus === "Free" && booking.calendarStatus === "Busy") {
+            // 🟩 If Google says FREE but booking is still marked Busy in DB
+            else if (googleStatus === "Free" && booking.calendarStatus === "Busy") {
                 if (!booking.user) {
+                    // ✅ No user → clear it
                     console.log(`🔄 Google says FREE & no user → Reverting ${booking._id} to Libre`);
                     booking.status = "Libre";
                     booking.calendarStatus = "Free";
                     await booking.save();
                 } else {
-                    console.log(`🛡️ Preserving booking (${booking.status}) because user exists on ${booking._id}`);
-                    booking.calendarStatus = "Free"; // still update Google status
+                    // ✅ User exists (Pending/Reserved) → keep it
+                    console.log(`🛡️ Google FREE but user exists → Preserving status '${booking.status}'`);
+                    booking.calendarStatus = "Free"; // optional update
                     await booking.save();
                 }
             }
         
+            // Attach google status for frontend rendering if needed
             booking.googleStatus = googleStatus;
         }
 
