@@ -6,6 +6,7 @@ import { fetchGroupedEvents } from "./googleCalendar.js";
 import mongoose from "mongoose";
 import cors from "cors";
 import nodemailer from "nodemailer"; 
+import { getEventTypes, getAvailableSlots } from "./calendly.js";
 import fetch from "node-fetch";
 const REDIRECT_URI = "https://site-bs.onrender.com/oauth2callback";
 
@@ -84,7 +85,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 const PORT = process.env.PORT || 5001;
 
 // 📌 Import and use agenda routes
-import agendaRoutes from "./backend/agenda.js";
+import agendaRoutes from "./routes/agenda.js";
 app.use("/api/agenda", agendaRoutes);
 
 // 📌 API Root Test
@@ -138,3 +139,10 @@ app.get("/oauth2callback", async (req, res) => {
     }
 });
 
+
+
+router.get("/test", (req, res) => {
+    res.send("✅ Route OK");
+});
+
+export default router;
