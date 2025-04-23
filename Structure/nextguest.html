@@ -474,17 +474,14 @@ let hoverIconPath = hoverIconMap[status] || "";
             throw new Error(`Server ${response.status}: ${text}`);
         }
 
-        const bookings = await response.json();
-        if (!Array.isArray(bookings)) {
-            console.error("❌ Unexpected response format:", bookings);
-            return [];
-        }
+        const json = await response.json();
+const bookings = json.slots || [];
 
-        bookings.forEach(booking => {
-            updateSlotStatus(booking.date, booking.time, booking.location, booking.status);
-        });
+bookings.forEach(booking => {
+    updateSlotStatus(booking.date, booking.time, booking.location, booking.status);
+});
 
-        return bookings;
+return bookings;
     } catch (error) {
         console.error("❌ Error fetching bookings:", error);
         return [];
