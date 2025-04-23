@@ -268,21 +268,18 @@ router.post("/book", async (req, res) => {
                 location,
                 user,
                 project,
-                status: "Reserved",
+                status: "Pending",  // ✅ Now it's manually confirmed later
                 calendarStatus: "Busy"
             });
+        
             await newBooking.save();
         
-            console.log("✅ Booking saved as Reserved:", newBooking);
+            console.log("✅ Booking saved as Pending:", newBooking);
         
-            if (newBooking.status === "Reserved") {
-                sendConfirmationEmail(user, newBooking);
-            } else {
-                sendPendingEmail(user, newBooking);
-            }
-            sendAdminBookingNotification(newBooking);
+            await sendPendingEmail(user, newBooking);       // ✅ Tell user it's pending
+            await sendAdminBookingNotification(newBooking); // ✅ Alert admin
         
-            return res.status(201).json({ message: "✅ Slot reserved successfully!" });
+            return res.status(201).json({ message: "✅ Slot booked as pending!" });
         } else {
             // 🔁 Existing booking found → add to waitlist
             existingBooking.waitlist.push({ user, project });
