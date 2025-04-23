@@ -19,7 +19,6 @@ app.use(cors({
     allowedHeaders: ["Content-Type"]
 }));
 app.use(express.json()); // ✅ Ensure JSON middleware is applied
-app.use("/public", express.static(path.join(process.cwd(), "public")));
 
 const router = express.Router();
 
