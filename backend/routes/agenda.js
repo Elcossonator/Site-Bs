@@ -261,24 +261,36 @@ router.post("/book", async (req, res) => {
         }
 
         // ✅ If slot is free, confirm the booking immediately
-        let newBooking = new Booking({ 
-            date, time, location, user, project, 
-            status: "Pending" 
-        });
-        await newBooking.save();
-
-        console.log("✅ Booking saved:", newBooking);
-
-        // ✅ If slot was free, send confirmation email (not pending)
-        if (newBooking.status === "Pending") {
-            sendPendingEmail(user, newBooking);
+        if (!existingBooking || existingBooking.status === "Libre") {
+            const newBooking = new Booking({
+                date,
+                time,
+                location,
+                user,
+                project,
+                status: "Reserved",
+                calendarStatus: "Busy"
+            });
+            await newBooking.save();
+        
+            console.log("✅ Booking saved as Reserved:", newBooking);
+        
+            if (newBooking.status === "Reserved") {
+                sendConfirmationEmail(user, newBooking);
+            } else {
+                sendPendingEmail(user, newBooking);
+            }
             sendAdminBookingNotification(newBooking);
-        } else if (newBooking.status === "Reserved") {
-            sendConfirmationEmail(user, newBooking);
-            sendAdminBookingNotification(newBooking);
+        
+            return res.status(201).json({ message: "✅ Slot reserved successfully!" });
+        } else {
+            // 🔁 Existing booking found → add to waitlist
+            existingBooking.waitlist.push({ user, project });
+            await existingBooking.save();
+        
+            sendWaitlistEmail(user, existingBooking); // 📩 Notify user and admin
+            return res.status(200).json({ message: "🕒 Added to waitlist" });
         }
-
-        return res.status(201).json({ message: "✅ Booking request sent!" });
 
     } catch (error) {
         console.error("❌ Booking error:", error);
