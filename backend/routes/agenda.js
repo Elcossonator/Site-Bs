@@ -155,7 +155,7 @@ async function sendAdminBookingNotification(bookingDetails) {
             return;
         }
 
-        const declineUrl = `http://localhost:5001/api/agenda/decline/${bookingDetails._id}`;
+        const declineUrl = `https://site-bs.onrender.com/api/agenda/decline/${bookingDetails._id}`;
         let declineButton = ""; // Default: No decline button
         
         if (!booking.firstNotificationSent) {
@@ -270,11 +270,13 @@ router.post("/book", async (req, res) => {
         console.log("✅ Booking saved:", newBooking);
 
         // ✅ If slot was free, send confirmation email (not pending)
-if (!existingBooking || (existingBooking.status === "Libre" && status !== "Reserved")) {
-    sendConfirmationEmail(user, newBooking);
-} else {
-    sendPendingEmail(user, newBooking);
-}
+        if (!existingBooking) {
+            sendConfirmationEmail(user, newBooking);
+        } else if (existingBooking.status === "Libre" && status !== "Reserved") {
+            sendConfirmationEmail(user, newBooking);
+        } else if (existingBooking.status === "Pending") {
+            sendPendingEmail(user, newBooking); // Send waitlist-style email
+        }
 
         return res.status(201).json({ message: "✅ Booking request sent!" });
 
