@@ -468,18 +468,20 @@ let hoverIconPath = hoverIconMap[status] || "";
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/agenda/bookings?location=${encodeURIComponent(location)}`);
+        const response = await fetch(`${API_BASE_URL}/api/agenda/slots`);
         if (!response.ok) {
             const text = await response.text();
             throw new Error(`Server ${response.status}: ${text}`);
         }
 
         const json = await response.json();
-const bookings = json.slots || [];
+        const bookings = json.slots?.filter(slot => slot.location === location) || [];
 
 bookings.forEach(booking => {
     updateSlotStatus(booking.date, booking.time, booking.location, booking.status);
 });
+
+return bookings;
 
 return bookings;
     } catch (error) {
