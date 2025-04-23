@@ -271,7 +271,10 @@ router.post("/book", async (req, res) => {
 
         // ✅ If slot was free, send confirmation email (not pending)
         if (newBooking.status === "Pending") {
-            sendPendingEmail(user, newBooking);  // 🕒 Always the default on user bookings
+            sendPendingEmail(user, newBooking);
+            sendAdminBookingNotification(newBooking);
+        } else if (newBooking.status === "Reserved") {
+            sendConfirmationEmail(user, newBooking);
             sendAdminBookingNotification(newBooking);
         }
 
