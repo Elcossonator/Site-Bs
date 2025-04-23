@@ -263,7 +263,7 @@ router.post("/book", async (req, res) => {
         // ✅ If slot is free, confirm the booking immediately
         let newBooking = new Booking({ 
             date, time, location, user, project, 
-            status: status || "Pending" 
+            status: "Pending" 
         });
         await newBooking.save();
 
