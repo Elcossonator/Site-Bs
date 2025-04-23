@@ -270,12 +270,8 @@ router.post("/book", async (req, res) => {
         console.log("✅ Booking saved:", newBooking);
 
         // ✅ If slot was free, send confirmation email (not pending)
-        if (!existingBooking) {
-            sendConfirmationEmail(user, newBooking);
-        } else if (existingBooking.status === "Libre" && status !== "Reserved") {
-            sendConfirmationEmail(user, newBooking);
-        } else if (existingBooking.status === "Pending") {
-            sendPendingEmail(user, newBooking); // Send waitlist-style email
+        if (newBooking.status === "Pending") {
+            sendPendingEmail(user, newBooking);  // 🕒 Always the default on user bookings
         }
 
         return res.status(201).json({ message: "✅ Booking request sent!" });
@@ -320,7 +316,7 @@ router.get("/decline/:id", async (req, res) => {
             booking.status = "Pending";
             await booking.save();
 
-            sendConfirmationEmail(nextUser.user, booking);
+            sendWaitlistPromotionEmail(nextUser.user, booking);
             console.log(`✅ ${nextUser.user} is now booked for this slot.`);
             return res.send(`<h2>✅ Booking declined. ${nextUser.user} is now booked for this slot.</h2>`);
         } else {
