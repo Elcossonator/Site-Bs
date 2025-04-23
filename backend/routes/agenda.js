@@ -396,23 +396,28 @@ router.get("/slots", async (req, res) => {
             let key = `${booking.date}_${booking.time}_${booking.location}`;
             let googleStatus = busySlots.has(key) ? "Busy" : "Free";
         
-            // 🟦 If Google says BUSY and current status is Libre → upgrade to Reserved
+            // Only set to Reserved if Libre and Google says Busy
             if (googleStatus === "Busy" && booking.status === "Libre") {
-                console.log(`🔄 Google BUSY → ${booking._id} set to Reserved`);
+                console.log(`🔄 Google says BUSY → Setting ${booking._id} to Reserved`);
                 booking.status = "Reserved";
                 booking.calendarStatus = "Busy";
                 await booking.save();
             }
         
-            // 🟨 If Google says FREE AND there's NO USER assigned → downgrade to Libre
-            if (googleStatus === "Free" && booking.calendarStatus === "Busy" && !booking.user) {
-                console.log(`🔄 Google FREE & no user → ${booking._id} set to Libre`);
-                booking.status = "Libre";
-                booking.calendarStatus = "Free";
-                await booking.save();
+            // Only revert to Libre if Google says Free AND there's no user
+            if (googleStatus === "Free" && booking.calendarStatus === "Busy") {
+                if (!booking.user) {
+                    console.log(`🔄 Google says FREE & no user → Reverting ${booking._id} to Libre`);
+                    booking.status = "Libre";
+                    booking.calendarStatus = "Free";
+                    await booking.save();
+                } else {
+                    console.log(`🛡️ Preserving booking (${booking.status}) because user exists on ${booking._id}`);
+                    booking.calendarStatus = "Free"; // still update Google status
+                    await booking.save();
+                }
             }
         
-            // 🟥 Otherwise, preserve existing MongoDB status
             booking.googleStatus = googleStatus;
         }
 
