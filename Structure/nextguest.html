@@ -455,27 +455,43 @@ let hoverIconPath = hoverIconMap[status] || "";
 
         document.addEventListener("DOMContentLoaded", generateLocationButtons);
 
+
+////////////////////////////////////
+
         async function fetchBookings() {
+    const selectedLocationBtn = document.querySelector(".location-btn.active");
+    const location = selectedLocationBtn?.dataset.location;
+
+    if (!location) {
+        console.warn("⚠️ No location selected for fetching bookings");
+        return [];
+    }
+
     try {
-        let response = await fetch(`${API_BASE_URL}/api/agenda/bookings`);
-        let data = await response.json();
-
-        console.log("📩 Received bookings from MongoDB:", data);
-
-        if (data.success !== false && data.slots.length > 0) {
-            data.slots.forEach(booking => {
-                let status = booking.status || "Libre";
-                console.log(`🟢 Updating UI for: ${booking.date} ${booking.time} @ ${booking.location} → ${status}`);
-                updateSlotStatus(booking.date, booking.time, booking.location, status);
-            });
+        const response = await fetch(`${API_BASE_URL}/api/agenda/bookings?location=${encodeURIComponent(location)}`);
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`Server ${response.status}: ${text}`);
         }
 
-        return data.slots;
+        const bookings = await response.json();
+        if (!Array.isArray(bookings)) {
+            console.error("❌ Unexpected response format:", bookings);
+            return [];
+        }
+
+        bookings.forEach(booking => {
+            updateSlotStatus(booking.date, booking.time, booking.location, booking.status);
+        });
+
+        return bookings;
     } catch (error) {
         console.error("❌ Error fetching bookings:", error);
         return [];
     }
 }
+
+///////////////////////////////////
 
 
         async function fetchSlotStatus(date, time, location) {
@@ -597,7 +613,20 @@ document.getElementById("booking-form").addEventListener("submit", async functio
     console.log("📤 Sending booking request:", { date, time, location, user: email });
 
     try {
-        let response = await fetch(`${API_BASE_URL}/api/agenda/book`);
+        let response = await fetch(`${API_BASE_URL}/api/agenda/book`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        date,
+        time,
+        location,
+        user: email,
+        project,
+        status
+    }),
+});
 
         let result = await response.json();
         console.log("📩 Server response:", result);
