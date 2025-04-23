@@ -395,19 +395,21 @@ router.get("/slots", async (req, res) => {
         for (let booking of bookings) {
             let key = `${booking.date}_${booking.time}_${booking.location}`;
             let googleStatus = busySlots.has(key) ? "Busy" : "Free";
-
-            if (busySlots.has(key) && booking.status === "Libre") {
+        
+            // 🟥 Set Reserved only if Google says busy and we're Libre
+            if (googleStatus === "Busy" && booking.status === "Libre") {
                 console.log(`🔄 Google says BUSY → Updating ${booking._id} to Reserved`);
                 await Booking.updateOne({ _id: booking._id }, { $set: { status: "Reserved", calendarStatus: "Busy" } });
                 booking.status = "Reserved";
-            } else if (!busySlots.has(key) && booking.calendarStatus === "Busy") {
-                let newStatus = booking.user ? "Pending" : "Libre";
-                console.log(`🔄 Google now says FREE → Reverting ${booking._id} to ${newStatus}`);
-                await Booking.updateOne({ _id: booking._id }, { $set: { status: newStatus, calendarStatus: "Free" } });
-                booking.status = newStatus;
             }
-
-            // Ajouter le statut Google dans la réponse API
+        
+            // 🟩 Set Libre only if Google says free AND no user exists
+            if (googleStatus === "Free" && booking.calendarStatus === "Busy" && !booking.user) {
+                console.log(`🔄 Google says FREE and no user → Reverting ${booking._id} to Libre`);
+                await Booking.updateOne({ _id: booking._id }, { $set: { status: "Libre", calendarStatus: "Free" } });
+                booking.status = "Libre";
+            }
+        
             booking.googleStatus = googleStatus;
         }
 
