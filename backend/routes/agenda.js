@@ -227,6 +227,7 @@ async function sendAdminBookingNotification(bookingDetails) {
 router.post("/book", async (req, res) => {
     try {
         console.log("📌 Received booking request:", req.body);
+        console.log("📩 Booking received on backend:", req.body);
 
         const { date, time, location, user, project, status } = req.body;
         if (!date || !time || !location || !user) {
@@ -260,22 +261,33 @@ router.post("/book", async (req, res) => {
         }
 
         // ✅ If slot is free, confirm the booking immediately
-        let newBooking = new Booking({ 
-            date, time, location, user, project, 
-            status: status || "Pending" 
-        });
-        await newBooking.save();
-
-        console.log("✅ Booking saved:", newBooking);
-
-        // ✅ If slot was free, send confirmation email (not pending)
-if (!existingBooking || (existingBooking.status === "Libre" && status !== "Reserved")) {
-    sendConfirmationEmail(user, newBooking);
-} else {
-    sendPendingEmail(user, newBooking);
-}
-
-        return res.status(201).json({ message: "✅ Booking request sent!" });
+        if (!existingBooking || existingBooking.status === "Libre") {
+            const newBooking = new Booking({
+                date,
+                time,
+                location,
+                user,
+                project,
+                status: "Pending",  // ✅ Now it's manually confirmed later
+                calendarStatus: "Busy"
+            });
+        
+            await newBooking.save();
+        
+            console.log("✅ Booking saved as Pending:", newBooking);
+        
+            await sendPendingEmail(user, newBooking);       // ✅ Tell user it's pending
+            await sendAdminBookingNotification(newBooking); // ✅ Alert admin
+        
+            return res.status(201).json({ message: "✅ Slot booked as pending!" });
+        } else {
+            // 🔁 Existing booking found → add to waitlist
+            existingBooking.waitlist.push({ user, project });
+            await existingBooking.save();
+        
+            sendWaitlistEmail(user, existingBooking); // 📩 Notify user and admin
+            return res.status(200).json({ message: "🕒 Added to waitlist" });
+        }
 
     } catch (error) {
         console.error("❌ Booking error:", error);
