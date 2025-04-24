@@ -261,6 +261,7 @@ router.post("/book", async (req, res) => {
         }
 
         // ✅ If slot is free, confirm the booking immediately
+        let wasFreeSlot = !existingBooking || existingBooking.status === "Libre";
         if (!existingBooking || existingBooking.status === "Libre") {
             const newBooking = new Booking({
                 date,
@@ -280,20 +281,18 @@ router.post("/book", async (req, res) => {
                 await sendConfirmationEmail(user, newBooking);
                 await sendAdminBookingNotification(newBooking);
             }
-              else if (newBooking.status === "Pending") {
-    if (!existingBooking) {
-        // 🔥 New booking created on free slot → treat as confirmed
-        await sendConfirmationEmail(user, newBooking);  // ✅ YES!
-        await sendAdminBookingNotification(newBooking);
-    } else {
-        // ⏳ Already pending → add to waitlist
-        await sendPendingEmail(user, newBooking);
-        await sendAdminBookingNotification(newBooking);
-    }
-            } else if (newBooking.status === "Reserved") {
-                await sendConfirmationEmail(user, newBooking);
-                await sendAdminBookingNotification(newBooking);
+            else if (newBooking.status === "Pending") {
+                if (wasFreeSlot) {
+                    // ✅ Was a Libre slot
+                    await sendConfirmationEmail(user, newBooking);
+                    await sendAdminBookingNotification(newBooking);
+                } else {
+                    // ⏳ Already pending, now waitlisted
+                    await sendPendingEmail(user, newBooking);
+                    await sendAdminBookingNotification(newBooking);
+                }
             }
+            
         
             return res.status(201).json({ message: "✅ Slot booked as pending!" });
         } else {
