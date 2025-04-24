@@ -277,7 +277,7 @@ router.post("/book", async (req, res) => {
             console.log("✅ Booking saved as Pending:", newBooking);
         
             if (newBooking.status === "Libre") {
-                await sendPendingEmail(user, newBooking);
+                await sendConfirmationEmail(user, newBooking);
                 await sendAdminBookingNotification(newBooking);
             }
               else if (newBooking.status === "Pending") {
