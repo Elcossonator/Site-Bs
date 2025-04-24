@@ -280,17 +280,16 @@ router.post("/book", async (req, res) => {
                 await sendConfirmationEmail(user, newBooking);
                 await sendAdminBookingNotification(newBooking);
             }
-            else if (newBooking.status === "Pending") {
-                if (!existingBooking) {
-                    // 🔥 New booking created on free slot → treat as confirmed
-                    await sendConfirmationEmail(user, newBooking);  // ✅ YES!
-                    await sendAdminBookingNotification(newBooking);
-                } else {
-                    // ⏳ Already pending → add to waitlist
-                    await sendPendingEmail(user, newBooking);
-                    await sendAdminBookingNotification(newBooking);
-                }
-            }
+              else if (newBooking.status === "Pending") {
+    if (!existingBooking) {
+        // 🔥 New booking created on free slot → treat as confirmed
+        await sendConfirmationEmail(user, newBooking);  // ✅ YES!
+        await sendAdminBookingNotification(newBooking);
+    } else {
+        // ⏳ Already pending → add to waitlist
+        await sendPendingEmail(user, newBooking);
+        await sendAdminBookingNotification(newBooking);
+    }
             } else if (newBooking.status === "Reserved") {
                 await sendConfirmationEmail(user, newBooking);
                 await sendAdminBookingNotification(newBooking);
