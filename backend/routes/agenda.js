@@ -109,6 +109,23 @@ async function sendWaitlistPromotionEmail(userEmail, bookingDetails) {
         `
     };
 
+    const mailOptionsAdmin = {
+        from: `"Bruits Sourds" <${process.env.EMAIL_USER}>`,
+        to: process.env.ADMIN_EMAIL,
+        replyTo: userEmail,  // ✅ So admin can directly reply to the user
+        subject: "📣 Waitlist User Promoted to Booking",
+        html: `
+            <h2>📣 A user was promoted from the waitlist!</h2>
+            <p><strong>User:</strong> <a href="mailto:${userEmail}">${userEmail}</a></p>
+            <p><strong>Project:</strong> ${bookingDetails.project}</p>
+            <p><strong>Date:</strong> ${bookingDetails.date}</p>
+            <p><strong>Time:</strong> ${bookingDetails.time}</p>
+            <p><strong>Location:</strong> ${bookingDetails.location}</p>
+            <br>
+            <p>You can reply to this email to start the discussion directly.</p>
+        `
+    };
+
     try {
         await transporter.sendMail(mailOptions);
         console.log(`✅ Waitlist promotion email sent to ${userEmail}`);
