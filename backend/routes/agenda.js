@@ -290,9 +290,13 @@ router.post("/book", async (req, res) => {
                     // ⏳ Already pending, now waitlisted
                     await sendPendingEmail(user, newBooking);
                     await sendAdminBookingNotification(newBooking);
+                    
                 }
+        
+            } else if (newBooking.status === "Reserved") {
+                await sendConfirmationEmail(user, newBooking);
+                await sendAdminBookingNotification(newBooking);
             }
-            
         
             return res.status(201).json({ message: "✅ Slot booked as pending!" });
         } else {
