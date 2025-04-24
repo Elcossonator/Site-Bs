@@ -276,10 +276,16 @@ router.post("/book", async (req, res) => {
         
             console.log("✅ Booking saved as Pending:", newBooking);
         
-            if (newBooking.status === "Pending") {
+            if (newBooking.status === "Libre") {
                 await sendPendingEmail(user, newBooking);
+                await sendAdminBookingNotification(newBooking);
+            }
+              else if (newBooking.status === "Pending") {
+                await sendPendingEmail(user, newBooking);
+                await sendAdminBookingNotification(newBooking);
             } else if (newBooking.status === "Reserved") {
                 await sendConfirmationEmail(user, newBooking);
+                await sendAdminBookingNotification(newBooking);
             }
         
             return res.status(201).json({ message: "✅ Slot booked as pending!" });
