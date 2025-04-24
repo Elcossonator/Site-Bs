@@ -94,6 +94,29 @@ async function sendPendingEmail(userEmail, bookingDetails) {
     }
 }
 
+
+async function sendWaitlistPromotionEmail(userEmail, bookingDetails) {
+    const mailOptions = {
+        from: `"Bruits Sourds" <${process.env.EMAIL_USER}>`,
+        to: userEmail,
+        subject: "🎉 You’ve been moved off the waitlist!",
+        html: `
+            <p>Hey! Good news — a slot just opened up and it’s now yours!</p>
+            <p><strong>Date:</strong> ${bookingDetails.date}</p>
+            <p><strong>Time:</strong> ${bookingDetails.time}</p>
+            <p><strong>Location:</strong> ${bookingDetails.location}</p>
+            <p>We’re excited to see your project. 🎨</p>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Waitlist promotion email sent to ${userEmail}`);
+    } catch (error) {
+        console.error("❌ Error sending waitlist promotion email:", error);
+    }
+}
+
 // ✅ 3️⃣ Waitlist Email (Admin Notification)
 async function sendWaitlistEmail(userEmail, bookingDetails) {
     // 🔎 Find the user's position in the waitlist
