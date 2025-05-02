@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-fr="Miss Chair 2025" data-en="Miss Chair 2025">Miss Chair 2025</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fafafa;
+      font-family: Arial, sans-serif;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 30%;
+      max-width: 450px;
+      min-width: 280px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 7px;
+    }
+
+    label {
+      display: block;
+      margin-top: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .label-img {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+    .checkbox-group {
+      align-items: center;
+      font-size: 11px;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 2rem;
+      background-color: #222;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #444;
+      opacity: 0.2;
+  transition: opacity 0.13s ease;
+    }
+
+    .buttonLang {
+      text-align: center;
+      font-size: 10px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .checkbox-group {
+      margin-top: 0.5rem;
+      text-align: center;
+      max-height: 60px;
+    }
+
+    .checkbox-group input {
+      width: auto;
+    }
+
+    .checkbox-group label {
+      display: inline-block;
+      font-weight: normal;
+      margin-right: 0.5rem;
+      text-align: center;
+    }
+
+    #step1, #step2 {
+      display: none;
+    }
+
+    #languageStep {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 2rem;
+      width: 100%;
+    }
+
+    #languageStep button {
+      width: 30%;
+      margin: 0.5rem;
+    }
+
+    #uploadButton {
+  color: black;
+  background-color: white;
+  border: 3px solid black;
+  padding: 0.7rem;
+  border-radius: 1,3px;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-weight: bold;
+  transition: background-color 0.7s ease;
+}
+
+#uploadButton:hover {
+    color: black;
+  background-color: white;
+  border: 3px solid rgb(197, 197, 197);
+  padding: 0.7rem;
+  border-radius: 1,3px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1rem;
+  font-weight: bold;
+  
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media screen and (max-width: 600px) {
+  form {
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+
+  label {
+    font-size: 14px;
+    margin-top: 1rem;
+  }
+
+  input, textarea, select, button {
+    font-size: 14px;
+    padding: 0.4rem;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  #languageStep button {
+    width: 60%;
+  }
+
+  .checkbox-group label {
+    margin-right: 1rem;
+    font-size: 13px;
+  }
+}
+
+
+  </style>
+</head>
+<body>
+    <form id="missChairForm">
+        <div class="label-img">
+            <img src="images/h1.svg" alt="Miss Chair 2025" data-lang="fr" class="lang-image" style="max-width: 70%;">
+            <img src="images/h1.svg" alt="Miss Chair Contest 2025" data-lang="en" class="lang-image hidden" style="max-width: 70%;">
+          </div>
+  
+      <div id="languageStep">
+        <button type="button" onclick="chooseLang('fr')">🇫🇷</button>
+        <button type="button" onclick="chooseLang('en')">🇬🇧</button>
+      </div>
+  
+      <div id="step1">
+        <div class="label-img">
+            <img src="images/titre-fr.svg" alt="Titre" data-lang="fr" class="lang-image" style="max-width: 20%;">
+            <img src="images/titre-en.svg" alt="Title" data-lang="en" class="lang-image hidden" style="max-width: 20%;">
+          </div>
+          <input
+            type="text"
+            id="titre"
+            name="titre"
+            maxlength="80"
+            data-fr-placeholder="max 80 caractères"
+            data-en-placeholder="max 80 characters"
+            placeholder="max 80 caractères"
+          />
+        
+            <div>
+                <img src="images/instagram-fr.svg" alt="Instagram" data-lang="fr" style="display:block; margin:auto; max-width:20%;">
+                <img src="images/instagram-fr.svg" alt="Instagram" data-lang="en" class="hidden" style="display:block; margin:auto; max-width:20%;">
+              </div>
+              <input
+                type="text"
+                id="pseudo"
+                name="pseudo"
+                data-fr-placeholder="@pseudo Insta"
+                data-en-placeholder="@insta handle"
+                placeholder="@pseudo Insta"
+              />
+
+
+              <div>
+                <img src="images/contact-fr.svg" alt="contact" data-lang="fr" style="display:block; margin:auto; max-width:30%;">
+                <img src="images/contact-fr.svg" alt="contact" data-lang="en" class="hidden" style="display:block; margin:auto; max-width:30%;">
+              </div>
+              <input
+                type="text"
+                id="contact"
+                name="contact"
+                data-fr-placeholder="deuxchaises@gchaise.fr"
+                data-en-placeholder="twochairs@mychair.com"
+                placeholder="deuxchaises@gchaise.fr"
+              />
+       
+
+              
+              <div class="label-img">
+                <img src="images/anonyme-fr.svg" alt="Participation anonyme ?" data-lang="fr" class="lang-image" style="max-width: 90%;">
+                <img src="images/anonyme-en.svg" alt="Anonymous participation?" data-lang="en" class="lang-image hidden" style="max-width: 90%;">
+              </div>
+              
+
+
+              <div class="checkbox-group" style="display: flex; justify-content: center; gap: 3rem; align-items: center; margin-top: 0rem;">
+                <div style="text-align: center;">
+                  <label for="identOui">
+                    <img src="images/oui.svg" alt="Oui" data-lang="fr" class="lang-image" style="height: 15px; display: block; margin: 0 auto;">
+                    <img src="images/yes.svg" alt="Yes" data-lang="en" class="lang-image hidden" style="height: 15px; display: block; margin: 0 auto;">
+                  </label>
+                  <input type="checkbox" id="identOui" name="identification" value="oui" onclick="toggleExclusive(this, 'identification')" style="margin-top: 0rem;">
+                </div>
+              
+                <div style="text-align: center;">
+                  <label for="identNon">
+                    <img src="images/non.svg" alt="Non" data-lang="fr" class="lang-image" style="height: 15px; display: block; margin: 0 auto;">
+                    <img src="images/no.svg" alt="No" data-lang="en" class="lang-image hidden" style="height: 15px; display: block; margin: 0 auto;">
+                  </label>
+                  <input type="checkbox" id="identNon" name="identification" value="non" onclick="toggleExclusive(this, 'identification')" style="margin-top: 0.3rem;">
+                </div>
+              </div>
+  
+
+
+              <div class="label-img">
+                <img src="images/afficher-titre-fr.svg" alt="Titre affiché ?" data-lang="fr" class="lang-image" style="max-width: 51%;">
+                <img src="images/afficher-titre-en.svg" alt="Display title?" data-lang="en" class="lang-image hidden" style="max-width: 51%;">
+              </div>
+
+
+              
+              <div class="checkbox-group" style="display: flex; justify-content: center; gap: 3rem; align-items: center; margin-top: 0rem;">
+                <div style="text-align: center;">
+                  <label for="titreOui">
+                    <img src="images/oui.svg" alt="Oui" data-lang="fr" class="lang-image" style="height: 15px; display: block; margin: 0 auto;">
+                    <img src="images/yes.svg" alt="Yes" data-lang="en" class="lang-image hidden" style="height: 15px; display: block; margin: 0 auto;">
+                  </label>
+                  <input type="checkbox" id="titreOui" name="titreAffiche" value="oui" onclick="toggleExclusive(this, 'titreAffiche')" style="margin-top: 0.3rem;">
+                </div>
+              
+                <div style="text-align: center;">
+                  <label for="titreNon">
+                    <img src="images/non.svg" alt="Non" data-lang="fr" class="lang-image" style="height: 15px; display: block; margin: 0 auto;">
+                    <img src="images/no.svg" alt="No" data-lang="en" class="lang-image hidden" style="height: 15px; display: block; margin: 0 auto;">
+                  </label>
+                  <input type="checkbox" id="titreNon" name="titreAffiche" value="non" onclick="toggleExclusive(this, 'titreAffiche')" style="margin-top: 0.3rem;">
+                </div>
+              </div>
+  
+              <div class="label-img">
+                <img src="images/photo-fr.svg" alt="Photo de la Candidate" data-lang="fr" class="lang-image" style="max-width: 80%;">
+                <img src="images/photo-en.svg" alt="Candidate's Photo" data-lang="en" class="lang-image hidden" style="max-width: 70%;">
+              </div>
+              
+              <input type="file" id="photo" name="photo" accept="image/*" hidden>
+<button type="button" id="uploadButton">
+  <span data-lang="fr" class="lang-text">Charger une photo</span>
+  <span data-lang="en" class="lang-text hidden">Upload a photo</span>
+</button>
+<span id="fileName" style="font-size: 12px; display: block; text-align: center; margin-top: 0.5rem;"></span>
+
+              <div style="text-align: center; margin-top: 1.5rem;">
+  <button type="button" onclick="nextStep()" style="
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+" data-fr="🪑" data-en="🪑">🪑</button>
+</div>
+  
+        <h2 data-fr="*champs obligatoire" data-en="*required field"> *champs obligatoire </h2>
+      </div>
+     
+     <!--Step 2-->
+     <div class="hidden" id="step2">
+  <!-- 📍 Lieu -->
+  <div class="label-img">
+    <img src="images/lieu-fr.svg" alt="Lieu" data-lang="fr" class="lang-image" style="max-width: 90%; display: block; margin: 0 auto;">
+    <img src="images/lieu-en.svg" alt="Place" data-lang="en" class="lang-image hidden" style="max-width: 80%; display: block; margin: 0 auto;">
+  </div>
+  <input type="text" id="lieu" name="lieu"
+         data-fr-placeholder="Ville, endroit…"
+         data-en-placeholder="City, place..."
+         placeholder="Ville, endroit…">
+
+  <!-- 🗓️ Date -->
+  <div class="label-img">
+    <img src="images/date-fr.svg" alt="Date" data-lang="fr" class="lang-image" style="max-width: 40%; display: block; margin: 0 auto;">
+    <img src="images/date-en.svg" alt="Date" data-lang="en" class="lang-image hidden" style="max-width: 55%; display: block; margin: 0 auto;">
+  </div>
+  <input type="date" id="date" name="date">
+
+  <!-- 📝 Notes -->
+  <div class="label-img">
+    <img src="images/notes-fr.svg" alt="Notes" data-lang="fr" class="lang-image" style="max-width: 75%; display: block; margin: 0 auto;">
+    <img src="images/notes-en.svg" alt="Notes" data-lang="en" class="lang-image hidden" style="max-width: 85%; display: block; margin: 0 auto;">
+  </div>
+  <textarea id="notes" name="notes" rows="3"
+            data-fr-placeholder="Ex : Trouvée au détour d’un marché, trônait seule sur un trottoir…"
+            data-en-placeholder="E.g.: Found at a market, sitting alone on a sidewalk..."
+            placeholder="Ex : Trouvée au détour d’un marché, trônait seule sur un trottoir…"></textarea>
+
+  <button type="submit" data-fr="📩 🪑" data-en="📩 🪑">📩 🪑</button>
+</div>
+    </form>
+  
+    <script>
+let currentLang = 'fr';
+const messages = {
+  missingInsta: {
+    fr: "Merci de renseigner un identifiant Instagram valide.",
+    en: "Please enter a valid Instagram handle."
+  },
+  missingEmail: {
+    fr: "Merci de renseigner un email valide.",
+    en: "Please enter a valid email."
+  },
+  missingTitleOrPhoto: {
+    fr: "Merci d'ajouter un titre ou une photo.",
+    en: "Please add a title or a photo."
+  },
+  missingAnon: {
+    fr: "Merci de préciser si tu veux rester anonyme.",
+    en: "Please specify if you want to stay anonymous."
+  },
+  missingDisplayTitle: {
+    fr: "Merci de préciser si tu veux afficher le titre.",
+    en: "Please specify if you want the title to be displayed."
+  },
+  formOk: {
+    fr: "Participation enregistrée ! 🪑",
+    en: "Submission received! 🪑"
+  }
+};
+
+
+
+ function setLang(lang) {
+  // Texte
+  document.querySelectorAll('[data-fr]').forEach(el => {
+    if (el.tagName !== "INPUT" && el.tagName !== "TEXTAREA") {
+      el.textContent = el.getAttribute(`data-${lang}`);
+    }
+  });
+
+  // Placeholder
+  document.querySelectorAll('[data-fr-placeholder]').forEach(el => {
+    el.placeholder = el.getAttribute(`data-${lang}-placeholder`);
+  });
+
+  // Gestion des images multilangues
+  document.querySelectorAll('.lang-image').forEach(img => {
+    const imgLang = img.getAttribute('data-lang');
+    img.classList.toggle('hidden', imgLang !== lang);
+  });
+
+  // Textes dynamiques internes aux boutons
+  document.querySelectorAll('.lang-text').forEach(span => {
+    const spanLang = span.getAttribute('data-lang');
+    span.classList.toggle('hidden', spanLang !== lang);
+  });
+
+  
+}
+  
+function chooseLang(lang) {
+  currentLang = lang;
+  setLang(lang);
+  document.getElementById("languageStep").style.display = "none";
+  document.getElementById("step1").style.display = "block";
+}
+  
+      function toggleExclusive(clicked, groupName) {
+        const checkboxes = document.querySelectorAll(`input[name='${groupName}']`);
+        checkboxes.forEach(cb => {
+          if (cb !== clicked) cb.checked = false;
+        });
+      }
+      
+  
+      async function nextStep() {
+        const titre = document.getElementById("titre").value.trim();
+        const photo = document.getElementById("photo").files.length;
+        const pseudo = document.getElementById("pseudo").value.trim();
+        const contact = document.getElementById("contact").value.trim();
+  
+        const identOui = document.getElementById("identOui").checked;
+        const identNon = document.getElementById("identNon").checked;
+        const titreOui = document.getElementById("titreOui").checked;
+        const titreNon = document.getElementById("titreNon").checked;
+  
+        const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        const instaRegex = /^[a-zA-Z0-9._]{1,30}$/;
+  
+        if (!pseudo || !instaRegex.test(pseudo)) {
+  alert(messages.missingInsta[currentLang]);
+  return;
+}
+
+if (!contact || !emailRegex.test(contact)) {
+  alert(messages.missingEmail[currentLang]);
+  return;
+}
+
+if (!titre && photo === 0) {
+  alert(messages.missingTitleOrPhoto[currentLang]);
+  return;
+}
+
+if (!identOui && !identNon) {
+  alert(messages.missingAnon[currentLang]);
+  return;
+}
+
+if (!titreOui && !titreNon) {
+  alert(messages.missingDisplayTitle[currentLang]);
+  return;
+}
+
+        document.getElementById("step1").classList.add("hidden");
+const step2 = document.getElementById("step2");
+step2.classList.remove("hidden");
+step2.style.display = "block";
+      }
+  
+      window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('photo').addEventListener('change', (e) => {
+      const fileName = e.target.files[0]?.name || 'Aucun fichier sélectionné';
+      document.getElementById('fileName').textContent = fileName;
+    });
+  });
+
+      document.getElementById("missChairForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        alert(messages.formOk[currentLang]);
+      });
+
+      document.getElementById('uploadButton').addEventListener('click', () => {
+  document.getElementById('photo').click();
+});
+
+document.getElementById('photo').addEventListener('change', (e) => {
+  const fileName = e.target.files[0]?.name || 'Aucun fichier sélectionné';
+  document.getElementById('fileName').textContent = fileName;
+});
+    </script>
+  </body>
+</html>
