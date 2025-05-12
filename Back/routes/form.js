@@ -1,8 +1,8 @@
-// Back/routes/form.js
-process.env.GOOGLE_SCRIPT_URL
 const express = require('express');
-const fetch = require('node-fetch');
 const router = express.Router();
+
+// Import dynamique de fetch (compatible avec Node sur Render)
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 router.post('/', async (req, res) => {
   const data = req.body;
