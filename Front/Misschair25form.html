@@ -534,6 +534,28 @@ async function submitToAPI(data) {
   }
 }
 
+function doGet(e) {
+  const action = e.parameter.action;
+  const row = parseInt(e.parameter.row);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("MissChair Participation");
+
+  if (!row || row < 2) {
+    return ContentService.createTextOutput("Ligne invalide.");
+  }
+
+  if (action === "validate") {
+    sheet.getRange(row, 11).setValue("✅");
+    return HtmlService.createHtmlOutput("✅ Participation validée !");
+  }
+
+  if (action === "reject") {
+    sheet.getRange(row, 11).setValue("❌");
+    return HtmlService.createHtmlOutput("❌ Participation refusée.");
+  }
+
+  return ContentService.createTextOutput("Action inconnue.");
+}
+
     </script>
   </body>
 </html>
