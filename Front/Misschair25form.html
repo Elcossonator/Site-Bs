@@ -508,20 +508,25 @@ document.getElementById('photo').addEventListener('change', (e) => {
 });
 
 async function submitToAPI(data) {
+  const formData = new FormData();
+
+  // Ajoute le fichier image
+  const photoFile = document.getElementById("photo").files[0];
+  formData.append("photo", photoFile);
+
+  // Ajoute tous les autres champs
+  for (const key in data) {
+    formData.append(key, data[key]);
+  }
+
   try {
     const response = await fetch("https://site-bs.onrender.com/api/form", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
+      body: formData // ⚠️ ne pas ajouter "Content-Type"
     });
 
     if (!response.ok) throw new Error("Échec réseau");
-
     const result = await response.json();
-
-    // 🎯 Affiche l’alerte bilingue ici, après succès
     alert(messages.formOk[currentLang]);
 
   } catch (err) {
