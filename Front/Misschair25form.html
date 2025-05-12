@@ -483,7 +483,20 @@ step2.style.display = "block";
       document.getElementById("missChairForm").addEventListener("submit", function(e) {
         e.preventDefault();
         alert(messages.formOk[currentLang]);
-      });
+
+        const data = {
+    titre: document.getElementById("titre").value,
+    pseudo: document.getElementById("pseudo").value,
+    contact: document.getElementById("contact").value,
+    anonyme: document.getElementById("identOui").checked ? "oui" : "non",
+    titreVisible: document.getElementById("titreOui").checked ? "oui" : "non",
+    lieu: document.getElementById("lieu").value,
+    date: document.getElementById("date").value,
+    notes: document.getElementById("notes").value
+  };
+
+  submitToAPI(data);
+});
 
       document.getElementById('uploadButton').addEventListener('click', () => {
   document.getElementById('photo').click();
@@ -493,6 +506,29 @@ document.getElementById('photo').addEventListener('change', (e) => {
   const fileName = e.target.files[0]?.name || 'Aucun fichier sélectionné';
   document.getElementById('fileName').textContent = fileName;
 });
+
+async function submitToAPI(data) {
+  try {
+    const response = await fetch("https://TON-BACK-END-DEPLOYE.com/api/form", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) throw new Error("Échec réseau");
+
+    const result = await response.json();
+
+    // 🎯 Affiche l’alerte bilingue ici, après succès
+    alert(messages.formOk[currentLang]);
+
+  } catch (err) {
+    alert("❌ " + (currentLang === 'fr' ? "Erreur d’envoi" : "Submission error") + ": " + err.message);
+  }
+}
+
     </script>
   </body>
 </html>
