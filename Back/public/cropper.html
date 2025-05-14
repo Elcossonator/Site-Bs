@@ -74,14 +74,28 @@
   
       // ⏬ Auto-load depuis paramètre URL
       window.addEventListener("DOMContentLoaded", function () {
-        const params = new URLSearchParams(window.location.search);
-        const imageUrl = params.get("img");
-        if (imageUrl) {
-          const decoded = decodeURIComponent(imageUrl);
-          document.getElementById("urlInput").value = decoded;
-          initCropper(decoded);
-        }
+  const params = new URLSearchParams(window.location.search);
+  const imageUrl = params.get("img");
+  if (imageUrl) {
+    const decoded = decodeURIComponent(imageUrl);
+    const input = document.getElementById("urlInput");
+    const img = document.getElementById("preview");
+
+    input.value = decoded;
+
+    // ✅ définir onload AVANT d’assigner src
+    img.onload = () => {
+      if (cropper) cropper.destroy();
+      cropper = new Cropper(img, {
+        aspectRatio: 9 / 16,
+        viewMode: 1,
+        autoCropArea: 1
       });
+    };
+
+    img.src = decoded;
+  }
+});
     </script>
   </body>
 </html>
