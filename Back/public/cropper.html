@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Crop MissChair</title>
+  <link href="https://unpkg.com/cropperjs/dist/cropper.min.css" rel="stylesheet"/>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; text-align: center; }
+    #preview { max-width: 100%; max-height: 70vh; margin-bottom: 1rem; }
+    input { width: 100%; margin-bottom: 10px; padding: 8px; font-size: 1rem; }
+    button { padding: 10px 20px; font-size: 1rem; margin: 5px; }
+  </style>
+</head>
+<body>
+
+  <h2>Recadrage Insta 9:16</h2>
+
+  <input id="urlInput" placeholder="Coller une URL Cloudinary ici" />
+  <button onclick="loadImage()">Charger</button>
+  <br>
+
+  <img id="preview" />
+  <br>
+  <button onclick="getCrop()">📸 Générer URL Cloudinary</button>
+
+  <p id="result"></p>
+
+  <script src="https://unpkg.com/cropperjs"></script>
+  <script>
+    let cropper;
+
+    function loadImage() {
+      const url = document.getElementById("urlInput").value;
+      const img = document.getElementById("preview");
+      img.src = url;
+      img.onload = () => {
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(img, {
+          aspectRatio: 9 / 16,
+          viewMode: 1,
+          autoCropArea: 1
+        });
+      };
+    }
+
+    function getCrop() {
+      if (!cropper) return alert("Charge une image d'abord.");
+      const data = cropper.getData(true);
+      const url = document.getElementById("urlInput").value;
+
+      const cropUrl = url.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
+      document.getElementById("result").innerHTML = `
+        <p><a href="${cropUrl}" target="_blank">🖼️ Voir le résultat</a></p>
+        <textarea rows="3" style="width:100%">${cropUrl}</textarea>
+      `;
+    }
+  </script>
+</body>
+</html>
