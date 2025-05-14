@@ -50,4 +50,20 @@ router.post('/', upload.single('photo'), async (req, res) => {
     }
   });
 
+  router.post("/submit-crop", async (req, res) => {
+    const { row, cropUrl } = req.body;
+  
+    try {
+      const response = await fetch(process.env.GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ row, cropUrl })
+      });
+      const text = await response.text();
+      res.send("OK: " + text);
+    } catch (error) {
+      res.status(500).send("Erreur : " + error.message);
+    }
+  });
+
 module.exports = router;
