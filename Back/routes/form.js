@@ -12,11 +12,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-
-// Import dynamique de fetch (compatible avec Node sur Render)
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
-
 router.post('/submit-crop', async (req, res) => {
   const { cropUrl, row } = req.body;
 
