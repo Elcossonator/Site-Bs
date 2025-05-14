@@ -12,75 +12,76 @@
   </style>
 </head>
 <body>
-
-  <h2>Recadrage Insta 9:16</h2>
-
-  <input id="urlInput" placeholder="Coller une URL Cloudinary ici" />
-  <button onclick="sendToSheet()">📤 Valider le crop</button>
-  <br>
-
-  <img id="preview" />
-  <br>
-  <button onclick="getCrop()">📸 Générer URL Cloudinary</button>
-
-  <p id="result"></p>
-
-  <script src="https://unpkg.com/cropperjs"></script>
-  <script>
-    let cropper;
-
-    function loadImage() {
+    <h2>Recadrage Insta 9:16</h2>
+  
+    <input id="urlInput" placeholder="URL Cloudinary" />
+    <button onclick="getCrop()">📸 Générer URL</button>
+    <button onclick="sendToSheet()">📤 Valider le crop</button>
+    <br>
+  
+    <img id="preview" />
+    <p id="result"></p>
+  
+    <script src="https://unpkg.com/cropperjs"></script>
+    <script>
+      let cropper;
+  
+      function initCropper(url) {
+        const img = document.getElementById("preview");
+        img.src = url;
+        img.onload = () => {
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(img, {
+            aspectRatio: 9 / 16,
+            viewMode: 1,
+            autoCropArea: 1
+          });
+        };
+      }
+  
+      function getCrop() {
+        if (!cropper) return alert("Charge une image d'abord.");
+        const data = cropper.getData(true);
+        const url = document.getElementById("urlInput").value;
+  
+        const cropUrl = url.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
+        document.getElementById("result").innerHTML = `
+          <p><a href="${cropUrl}" target="_blank">🖼️ Voir le résultat</a></p>
+          <textarea rows="3" style="width:100%">${cropUrl}</textarea>
+        `;
+      }
+  
+      function sendToSheet() {
+        if (!cropper) return alert("Charge une image d'abord.");
+        const data = cropper.getData(true);
+        const original = document.getElementById("urlInput").value;
+        const croppedUrl = original.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
+  
+        fetch("https://script.google.com/macros/s/AKfycbzHYPhnqrmucFWp9xXuQF9U_iwj985LQ90-afn9KR1swrpYw5HgCogSuDIc8J7rNzkJ/exec", {
+          method: "POST",
+          body: JSON.stringify({
+            cropUrl: croppedUrl,
+            row: new URLSearchParams(window.location.search).get("row") || ""
+          }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        .then(res => res.text())
+        .then(res => alert("📄 Crop envoyé : " + res))
+        .catch(err => alert("Erreur d'envoi : " + err));
+      }
+  
+      // ⏬ Auto-load depuis paramètre URL
+      window.addEventListener("DOMContentLoaded", function () {
         const params = new URLSearchParams(window.location.search);
-const imgParam = params.get("img");
-if (imgParam) {
-  document.getElementById("urlInput").value = imgParam;
-  loadImage();
-}
-      const img = document.getElementById("preview");
-      img.src = url;
-      img.onload = () => {
-        if (cropper) cropper.destroy();
-        cropper = new Cropper(img, {
-          aspectRatio: 9 / 16,
-          viewMode: 1,
-          autoCropArea: 1
-        });
-      };
-    }
-
-    function getCrop() {
-      if (!cropper) return alert("Charge une image d'abord.");
-      const data = cropper.getData(true);
-      const url = document.getElementById("urlInput").value;
-
-      const cropUrl = url.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
-      document.getElementById("result").innerHTML = `
-        <p><a href="${cropUrl}" target="_blank">🖼️ Voir le résultat</a></p>
-        <textarea rows="3" style="width:100%">${cropUrl}</textarea>
-      `;
-    }
-
-    function sendToSheet() {
-  if (!cropper) return alert("Charge une image d'abord.");
-  const data = cropper.getData(true);
-  const original = document.getElementById("urlInput").value;
-  const croppedUrl = original.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
-
-  // ⚠️ Remplace par l'URL de ton Apps Script Web App
-  fetch("https://script.google.com/macros/s/AKfycbzHYPhnqrmucFWp9xXuQF9U_iwj985LQ90-afn9KR1swrpYw5HgCogSuDIc8J7rNzkJ/exec", {
-    method: "POST",
-    body: JSON.stringify({
-      cropUrl: croppedUrl,
-      row: new URLSearchParams(window.location.search).get("row") || ""
-    }),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-  .then(res => res.text())
-  .then(res => alert("📄 Crop envoyé : " + res))
-  .catch(err => alert("Erreur d'envoi : " + err));
-}
-  </script>
-</body>
+        const imageUrl = params.get("img");
+        if (imageUrl) {
+          const decoded = decodeURIComponent(imageUrl);
+          document.getElementById("urlInput").value = decoded;
+          initCropper(decoded);
+        }
+      });
+    </script>
+  </body>
 </html>
