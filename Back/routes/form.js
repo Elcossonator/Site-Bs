@@ -1,4 +1,5 @@
 const express = require('express');
+const fetch = require('node-fetch');
 const router = express.Router();
 
 const multer = require('multer');
@@ -14,6 +15,29 @@ cloudinary.config({
 
 // Import dynamique de fetch (compatible avec Node sur Render)
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
+
+router.post('/submit-crop', async (req, res) => {
+  const { cropUrl, row } = req.body;
+
+  if (!cropUrl || !row) {
+    return res.status(400).json({ error: "cropUrl et row sont requis." });
+  }
+
+  try {
+    const response = await fetch(process.env.GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cropUrl, row })
+    });
+
+    const text = await response.text();
+    res.status(200).send(`✅ Crop envoyé : ${text}`);
+  } catch (err) {
+    console.error("Erreur d'envoi vers Google Script:", err);
+    res.status(500).send("❌ Erreur serveur");
+  }
+});
 
 router.post('/', upload.single('photo'), async (req, res) => {
     const data = req.body;
