@@ -2,7 +2,6 @@
 const express = require('express');
 const cors = require('cors');
 const formRoutes = require('./routes/form');
-const formRoutes = require('./routes/form');
 app.use('/api', formRoutes);
 
 const app = express();
