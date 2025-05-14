@@ -23,7 +23,12 @@
   <button onclick="getCrop()">📸 Générer URL</button>
   <button onclick="sendToSheet()">📤 Valider le crop</button>
 
+  <canvas id="canvasOutput" style="display:none;"></canvas>
+  <button onclick="generateCompo()">🧩 Générer composition</button>
+
   <p id="result"></p>
+
+
 
   <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
   <script>
@@ -86,6 +91,34 @@
         img.src = decoded;
       }
     });
+
+    function generateCompo() {
+  const canvas = document.getElementById("canvasOutput");
+  const ctx = canvas.getContext("2d");
+  const img = document.getElementById("preview");
+
+  // Dimensions fixes pour le format 9:16
+  canvas.width = 900;
+  canvas.height = 1600;
+
+  // Dessiner l'image croppée
+  const cropData = cropper.getData(true);
+  const sx = cropData.x, sy = cropData.y;
+  const sw = cropData.width, sh = cropData.height;
+  const dx = 0, dy = 0, dw = canvas.width, dh = canvas.height;
+
+  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+
+  // Ajouter texte par-dessus
+  ctx.fillStyle = "white";
+  ctx.font = "bold 50px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("Miss Chair 2025", canvas.width / 2, 100);
+
+  // Optionnel : exporter en base64
+  const finalUrl = canvas.toDataURL("image/png");
+  document.getElementById("result").innerHTML = `<img src="${finalUrl}" style="max-height:400px">`;
+}
   </script>
 </body>
 </html>
