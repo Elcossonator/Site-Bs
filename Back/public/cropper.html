@@ -3,32 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <title>Crop MissChair</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://unpkg.com/cropperjs/dist/cropper.min.css" rel="stylesheet"/>
   <style>
     body { font-family: sans-serif; padding: 1rem; text-align: center; }
-    #preview { max-width: 100%; max-height: 70vh; margin-bottom: 1rem; }
+    #preview { max-width: 100%; max-height: 60vh; margin-bottom: 1rem; border: 1px solid #ccc; }
     input { width: 100%; margin-bottom: 10px; padding: 8px; font-size: 1rem; }
     button { padding: 10px 20px; font-size: 1rem; margin: 5px; }
   </style>
 </head>
 <body>
-    <h2>Recadrage Insta 9:16</h2>
-  
-    <input id="urlInput" placeholder="URL Cloudinary" />
-    <button onclick="getCrop()">📸 Générer URL</button>
-    <button onclick="sendToSheet()">📤 Valider le crop</button>
-    <br>
-  
-    <img id="preview" />
-    <p id="result"></p>
-  
-    <script src="https://unpkg.com/cropperjs"></script>
-    <script>
-      let cropper;
-  
-      function initCropper(url) {
+
+  <h2>Recadrage Insta 9:16</h2>
+
+  <input id="urlInput" placeholder="URL Cloudinary" />
+  <br>
+  <img id="preview" />
+  <br>
+  <button onclick="getCrop()">📸 Générer URL</button>
+  <button onclick="sendToSheet()">📤 Valider le crop</button>
+
+  <p id="result"></p>
+
+  <script src="https://unpkg.com/cropperjs"></script>
+  <script>
+    let cropper;
+
+    function getCrop() {
+      if (!cropper) return alert("Charge une image d'abord.");
+      const data = cropper.getData(true);
+      const url = document.getElementById("urlInput").value;
+
+      const cropUrl = url.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
+      document.getElementById("result").innerHTML = `
+        <p><a href="${cropUrl}" target="_blank">🖼️ Voir le résultat</a></p>
+        <textarea rows="3" style="width:100%">${cropUrl}</textarea>
+      `;
+    }
+
+    function sendToSheet() {
+      if (!cropper) return alert("Charge une image d'abord.");
+      const data = cropper.getData(true);
+      const original = document.getElementById("urlInput").value;
+      const croppedUrl = original.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
+
+      fetch("https://script.google.com/macros/s/AKfycbzHYPhnqrmucFWp9xXuQF9U_iwj985LQ90-afn9KR1swrpYw5HgCogSuDIc8J7rNzkJ/exec", {
+        method: "POST",
+        body: JSON.stringify({
+          cropUrl: croppedUrl,
+          row: new URLSearchParams(window.location.search).get("row") || ""
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.text())
+      .then(res => alert("📄 Crop envoyé : " + res))
+      .catch(err => alert("Erreur d'envoi : " + err));
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+      const params = new URLSearchParams(window.location.search);
+      const imageUrl = params.get("img");
+      if (imageUrl) {
+        const decoded = decodeURIComponent(imageUrl);
+        const input = document.getElementById("urlInput");
         const img = document.getElementById("preview");
-        img.src = url;
+
+        input.value = decoded;
+
         img.onload = () => {
           if (cropper) cropper.destroy();
           cropper = new Cropper(img, {
@@ -37,65 +80,10 @@
             autoCropArea: 1
           });
         };
-      }
-  
-      function getCrop() {
-        if (!cropper) return alert("Charge une image d'abord.");
-        const data = cropper.getData(true);
-        const url = document.getElementById("urlInput").value;
-  
-        const cropUrl = url.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
-        document.getElementById("result").innerHTML = `
-          <p><a href="${cropUrl}" target="_blank">🖼️ Voir le résultat</a></p>
-          <textarea rows="3" style="width:100%">${cropUrl}</textarea>
-        `;
-      }
-  
-      function sendToSheet() {
-        if (!cropper) return alert("Charge une image d'abord.");
-        const data = cropper.getData(true);
-        const original = document.getElementById("urlInput").value;
-        const croppedUrl = original.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
-  
-        fetch("https://script.google.com/macros/s/AKfycbzHYPhnqrmucFWp9xXuQF9U_iwj985LQ90-afn9KR1swrpYw5HgCogSuDIc8J7rNzkJ/exec", {
-          method: "POST",
-          body: JSON.stringify({
-            cropUrl: croppedUrl,
-            row: new URLSearchParams(window.location.search).get("row") || ""
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        })
-        .then(res => res.text())
-        .then(res => alert("📄 Crop envoyé : " + res))
-        .catch(err => alert("Erreur d'envoi : " + err));
-      }
-  
-      // ⏬ Auto-load depuis paramètre URL
-      window.addEventListener("DOMContentLoaded", function () {
-  const params = new URLSearchParams(window.location.search);
-  const imageUrl = params.get("img");
-  if (imageUrl) {
-    const decoded = decodeURIComponent(imageUrl);
-    const input = document.getElementById("urlInput");
-    const img = document.getElementById("preview");
 
-    input.value = decoded;
-
-    // ✅ définir onload AVANT d’assigner src
-    img.onload = () => {
-      if (cropper) cropper.destroy();
-      cropper = new Cropper(img, {
-        aspectRatio: 9 / 16,
-        viewMode: 1,
-        autoCropArea: 1
-      });
-    };
-
-    img.src = decoded;
-  }
-});
-    </script>
-  </body>
+        img.src = decoded;
+      }
+    });
+  </script>
+</body>
 </html>
