@@ -75,6 +75,15 @@
   ctx.textAlign = "right";
   ctx.textBaseline = "bottom"; // ✅ Position verticale contrôlée
 
+// a supp
+  ctx.strokeStyle = "red";
+ctx.beginPath();
+ctx.moveTo(0, canvas.height - marginBottom);
+ctx.lineTo(canvas.width, canvas.height - marginBottom);
+ctx.stroke();
+// a sup
+
+
   const marginRight = 60;
   const marginBottom = 250;
   const lineHeight = canvas.height * 0.06;
@@ -87,7 +96,7 @@
   // Le dernier texte (pseudo) en bas
   lines.forEach((text, index) => {
   const x = canvas.width - marginRight;
-  const y = canvas.height - marginBottom - index * lineHeight;
+  const y = canvas.height - marginBottom - (lines.length - index - 1) * lineHeight;
   ctx.strokeText(text, x, y);
   ctx.fillText(text, x, y);
 });
