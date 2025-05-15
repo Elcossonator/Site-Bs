@@ -33,42 +33,76 @@
   <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
   <script>
     let cropper;
-
+  
     function getCrop() {
       if (!cropper) return alert("Charge une image d'abord.");
       const data = cropper.getData(true);
       const url = document.getElementById("urlInput").value;
-
+  
       const cropUrl = url.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
       document.getElementById("result").innerHTML = `
         <p><a href="${cropUrl}" target="_blank">🖼️ Voir le résultat</a></p>
         <textarea rows="3" style="width:100%">${cropUrl}</textarea>
       `;
     }
-
+  
     function sendToSheet() {
       if (!cropper) return alert("Charge une image d'abord.");
       const data = cropper.getData(true);
       const original = document.getElementById("urlInput").value;
       const croppedUrl = original.replace('/upload/', `/upload/c_crop,w_${Math.round(data.width)},h_${Math.round(data.height)},x_${Math.round(data.x)},y_${Math.round(data.y)}/`);
-
+  
       fetch("https://site-bs.onrender.com/api/submit-crop", {
-  method: "POST",
-  body: JSON.stringify({
-    cropUrl: croppedUrl,
-    row: new URLSearchParams(window.location.search).get("row") || ""
-  }),
-  headers: {
-    "Content-Type": "application/json"
-  }
-})
+        method: "POST",
+        body: JSON.stringify({
+          cropUrl: croppedUrl,
+          row: new URLSearchParams(window.location.search).get("row") || ""
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
       .then(res => res.text())
       .then(res => alert("📄 Crop envoyé : " + res))
       .catch(err => alert("Erreur d'envoi : " + err));
     }
-
-    
-
+  
+    function generateCompo() {
+      const canvas = document.getElementById("canvasOutput");
+      const ctx = canvas.getContext("2d");
+      const img = document.getElementById("preview");
+  
+      canvas.width = 900;
+      canvas.height = 1600;
+  
+      const params = new URLSearchParams(window.location.search);
+      const pseudo = params.get("pseudo");
+      const titre = params.get("titre");
+      const anonyme = params.get("anonyme");
+      const titreVisible = params.get("titreVisible");
+  
+      const cropData = cropper.getData(true);
+      ctx.drawImage(img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, canvas.width, canvas.height);
+  
+      ctx.fillStyle = "white";
+      ctx.font = "bold 50px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Miss Chair 2025", canvas.width / 2, 100);
+  
+      if (anonyme === "non" && pseudo) {
+        ctx.font = "italic 40px sans-serif";
+        ctx.fillText(pseudo, canvas.width / 2, canvas.height - 100);
+      }
+  
+      if (titreVisible === "oui" && titre) {
+        ctx.font = "bold 45px sans-serif";
+        ctx.fillText(titre, canvas.width / 2, canvas.height - 160);
+      }
+  
+      const finalUrl = canvas.toDataURL("image/png");
+      document.getElementById("result").innerHTML = `<img src="${finalUrl}" style="max-height:400px">`;
+    }
+  
     window.addEventListener("DOMContentLoaded", function () {
       const params = new URLSearchParams(window.location.search);
       const imageUrl = params.get("img");
@@ -76,9 +110,9 @@
         const decoded = decodeURIComponent(imageUrl);
         const input = document.getElementById("urlInput");
         const img = document.getElementById("preview");
-
+  
         input.value = decoded;
-
+  
         img.onload = () => {
           if (cropper) cropper.destroy();
           cropper = new Cropper(img, {
@@ -87,84 +121,10 @@
             autoCropArea: 1
           });
         };
-
+  
         img.src = decoded;
       }
     });
-
-    function generateCompo() {
-  const canvas = document.getElementById("canvasOutput");
-  const ctx = canvas.getContext("2d");
-  const img = document.getElementById("preview");
-
-  // Dimensions fixes pour le format 9:16
-  canvas.width = 900;
-  canvas.height = 1600;
-
-  // Récupération des paramètres URL
-  const params = new URLSearchParams(window.location.search);
-  const pseudo = params.get("pseudo");
-  const titre = params.get("titre");
-  const anonyme = params.get("anonyme");
-  const titreVisible = params.get("titreVisible");
-
-  // Recadrage
-  const cropData = cropper.getData(true);
-  ctx.drawImage(
-    img,
-    cropData.x, cropData.y,
-    cropData.width, cropData.height,
-    0, 0,
-    canvas.width, canvas.height
-  );
-
-  // Texte fixe principal
-  ctx.fillStyle = "white";
-  ctx.font = "bold 50px sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("Miss Chair 2025", canvas.width / 2, 100);
-
-  // Si NON anonyme, on affiche le pseudo
-  if (anonyme === "non" && pseudo) {
-    ctx.font = "italic 40px sans-serif";
-    ctx.fillText(pseudo, canvas.width / 2, canvas.height - 100);
-  }
-
-  // Si titreVisible est "oui", afficher le titre
-  if (titreVisible === "oui" && titre) {
-    ctx.font = "bold 45px sans-serif";
-    ctx.fillText(titre, canvas.width / 2, canvas.height - 160);
-  }
-
-  const finalUrl = canvas.toDataURL("image/png");
-  document.getElementById("result").innerHTML = `<img src="${finalUrl}" style="max-height:400px">`;
-}
-  const canvas = document.getElementById("canvasOutput");
-  const ctx = canvas.getContext("2d");
-  const img = document.getElementById("preview");
-
-  // Dimensions fixes pour le format 9:16
-  canvas.width = 900;
-  canvas.height = 1600;
-
-  // Dessiner l'image croppée
-  const cropData = cropper.getData(true);
-  const sx = cropData.x, sy = cropData.y;
-  const sw = cropData.width, sh = cropData.height;
-  const dx = 0, dy = 0, dw = canvas.width, dh = canvas.height;
-
-  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
-
-  // Ajouter texte par-dessus
-  ctx.fillStyle = "white";
-  ctx.font = "bold 50px sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("Miss Chair 2025", canvas.width / 2, 100);
-
-  // Optionnel : exporter en base64
-  const finalUrl = canvas.toDataURL("image/png");
-  document.getElementById("result").innerHTML = `<img src="${finalUrl}" style="max-height:400px">`;
-}
   </script>
 </body>
 </html>
