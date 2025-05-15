@@ -24,7 +24,6 @@
   <button onclick="sendToSheet()">📤 Valider le crop</button>
 
   <canvas id="canvasOutput" style="display:none;"></canvas>
-  <button onclick="generateCompo()">🧩 Générer composition</button>
 
   <p id="result"></p>
 
@@ -67,7 +66,7 @@
       .catch(err => alert("Erreur d'envoi : " + err));
     }
   
-    function generateCompo() {
+   
       const canvas = document.getElementById("canvasOutput");
       const ctx = canvas.getContext("2d");
       const img = document.getElementById("preview");
@@ -112,6 +111,7 @@
         const img = document.getElementById("preview");
   
         input.value = decoded;
+        img.crossOrigin = "anonymous";
   
         img.onload = () => {
           if (cropper) cropper.destroy();
