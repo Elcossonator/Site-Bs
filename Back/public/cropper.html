@@ -65,43 +65,7 @@
       .then(res => alert("📄 Crop envoyé : " + res))
       .catch(err => alert("Erreur d'envoi : " + err));
     }
-  
-   
-      const canvas = document.getElementById("canvasOutput");
-      const ctx = canvas.getContext("2d");
-      const img = document.getElementById("preview");
-  
-      canvas.width = 900;
-      canvas.height = 1600;
-  
-      const params = new URLSearchParams(window.location.search);
-      const pseudo = params.get("pseudo");
-      const titre = params.get("titre");
-      const anonyme = params.get("anonyme");
-      const titreVisible = params.get("titreVisible");
-  
-      const cropData = cropper.getData(true);
-      ctx.drawImage(img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, canvas.width, canvas.height);
-  
-      ctx.fillStyle = "white";
-      ctx.font = "bold 50px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("Miss Chair 2025", canvas.width / 2, 100);
-  
-      if (anonyme === "non" && pseudo) {
-        ctx.font = "italic 40px sans-serif";
-        ctx.fillText(pseudo, canvas.width / 2, canvas.height - 100);
-      }
-  
-      if (titreVisible === "oui" && titre) {
-        ctx.font = "bold 45px sans-serif";
-        ctx.fillText(titre, canvas.width / 2, canvas.height - 160);
-      }
-  
-      const finalUrl = canvas.toDataURL("image/png");
-      document.getElementById("result").innerHTML = `<img src="${finalUrl}" style="max-height:400px">`;
-    }
-  
+
     window.addEventListener("DOMContentLoaded", function () {
       const params = new URLSearchParams(window.location.search);
       const imageUrl = params.get("img");
