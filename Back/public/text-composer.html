@@ -85,12 +85,12 @@
     lines.reverse(); // titre en haut, pseudo en bas
 
     lines.forEach((text, index) => {
-      const lineHeight = canvas.height * 0.06;
-      const y = canvas.height - marginBottom - index * lineHeight;
-      const x = canvas.width - marginRight;
-      ctx.strokeText(text, x, y);
-      ctx.fillText(text, x, y);
-    });
+  const lineHeight = canvas.height * 0.06;
+  const y = canvas.height - marginBottom - (lines.length - 1 - index) * lineHeight;
+  const x = canvas.width - marginRight;
+  ctx.strokeText(text, x, y);
+  ctx.fillText(text, x, y);
+});
   });
 
   // 💾 Submit finalImage à Cloudinary
