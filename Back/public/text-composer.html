@@ -86,11 +86,10 @@
 
   // Le dernier texte (pseudo) en bas
   lines.forEach((text, index) => {
-    const x = canvas.width - marginRight;
-    const y = canvas.height - marginBottom - (lines.length - 1 - index) * lineHeight;
-    ctx.strokeText(text, x, y);
-    ctx.fillText(text, x, y);
-  });
+  const x = canvas.width - marginRight;
+  const y = canvas.height - marginBottom - index * lineHeight;
+  ctx.strokeText(text, x, y);
+  ctx.fillText(text, x, y);
 });
 
   // 💾 Submit finalImage à Cloudinary
