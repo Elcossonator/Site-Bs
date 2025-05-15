@@ -53,7 +53,13 @@
 
     const image = new Image();
     image.crossOrigin = "anonymous";
-    image.onload = () => {
+    Promise.all([
+  new Promise(resolve => {
+    image.onload = resolve;
+    image.src = decodeURIComponent(cropUrl);
+  }),
+  document.fonts.ready
+]).then(() => {
   const aspectRatio = 9 / 16;
   const maxHeight = window.innerHeight * 0.8;
   const width = maxHeight * aspectRatio;
@@ -61,28 +67,21 @@
   canvas.width = width;
   canvas.height = maxHeight;
 
-  // 1️⃣ On dessine l'image d'abord
   ctx.drawImage(image, 0, 0, width, maxHeight);
 
-  // 2️⃣ On attend que la police soit prête (si tu veux Roboto ou autre)
-  document.fonts.ready.then(() => {
-    ctx.fillStyle = "#ffffff";
-    ctx.textAlign = "center";
-    ctx.font = `${Math.floor(canvas.height * 0.06)}px Roboto`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.font = `${Math.floor(canvas.height * 0.06)}px Roboto`;
 
-    if (titreVisible && titre) {
-      ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
-    }
+  if (titreVisible && titre) {
+    ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
+  }
 
-    if (!anonyme && pseudo) {
-      ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
-    }
-  });
-};
+  if (!anonyme && pseudo) {
+    ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
+  }
+});
 
-    if (cropUrl) {
-      image.src = decodeURIComponent(cropUrl);
-    }
 
     window.sendFinalImage = function () {
   const params = new URLSearchParams(window.location.search);
