@@ -32,8 +32,10 @@
   <button onclick="sendFinalImage()">📤 Valider l’image finale</button>
 
   <script>
+     window.addEventListener("DOMContentLoaded", function () {
     const params = new URLSearchParams(window.location.search);
-    const cropUrl = params.get("crop");
+    const cropUrl = params.get("img");  // on récupère depuis ?img=...
+
     const row = params.get("row");
     const pseudo = params.get("pseudo") || "";
     const titre = params.get("titre") || "";
@@ -62,9 +64,12 @@
         ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
       }
     };
-    image.src = decodeURIComponent(cropUrl);
 
-    function sendFinalImage() {
+    if (cropUrl) {
+      image.src = decodeURIComponent(cropUrl);
+    }
+
+    window.sendFinalImage = function () {
       const dataUrl = canvas.toDataURL("image/png");
 
       fetch("https://site-bs.onrender.com/api/submit-crop", {
@@ -80,7 +85,8 @@
       .then(res => res.text())
       .then(res => alert("✅ Image finale envoyée : " + res))
       .catch(err => alert("❌ Erreur d'envoi : " + err));
-    }
+    };
+  });
   </script>
 </body>
 </html>
