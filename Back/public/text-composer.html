@@ -53,46 +53,45 @@
   image.crossOrigin = "anonymous";
 
   Promise.all([
-    new Promise(resolve => {
-      image.onload = resolve;
-      image.src = decodeURIComponent(cropUrl);
-    }),
-    document.fonts.ready
-  ]).then(() => {
-    const aspectRatio = 9 / 16;
-    const maxHeight = window.innerHeight * 0.8;
-    const width = maxHeight * aspectRatio;
+  new Promise(resolve => {
+    image.onload = resolve;
+    image.src = decodeURIComponent(cropUrl);
+  }),
+  document.fonts.ready
+]).then(() => {
+  const aspectRatio = 9 / 16;
+  const maxHeight = window.innerHeight * 0.8;
+  const width = maxHeight * aspectRatio;
 
-    canvas.width = width;
-    canvas.height = maxHeight;
+  canvas.width = width;
+  canvas.height = maxHeight;
 
-    ctx.drawImage(image, 0, 0, width, maxHeight);
+  ctx.drawImage(image, 0, 0, width, maxHeight);
 
-    ctx.fillStyle = "#ffffff";
-    ctx.strokeStyle = "#000000";
-    ctx.lineWidth = 4;
-    ctx.font = `${Math.floor(canvas.height * 0.05)}px Roboto`;
-    ctx.textAlign = "right";
-    ctx.textBaseline = "bottom";
+  ctx.fillStyle = "#ffffff";
+  ctx.strokeStyle = "#000000";
+  ctx.lineWidth = 4;
+  ctx.font = `${Math.floor(canvas.height * 0.05)}px Roboto`;
+  ctx.textAlign = "right";
+  ctx.textBaseline = "bottom"; // ✅ Position verticale contrôlée
 
-    const marginRight = 60;
-    const marginBottom = 250;
-
-    let lines = [];
-
-    if (titreVisible && titre) lines.push(titre);
-    if (!anonyme && pseudo) lines.push(pseudo);
-
-    lines.reverse(); // titre en haut, pseudo en bas
-
-    lines.forEach((text, index) => {
+  const marginRight = 60;
+  const marginBottom = 250;
   const lineHeight = canvas.height * 0.06;
-  const y = canvas.height - marginBottom - (lines.length - 1 - index) * lineHeight;
-  const x = canvas.width - marginRight;
-  ctx.strokeText(text, x, y);
-  ctx.fillText(text, x, y);
-});
+
+  let lines = [];
+
+  if (titreVisible && titre) lines.push(titre);
+  if (!anonyme && pseudo) lines.push(`par ${pseudo}`);
+
+  // Le dernier texte (pseudo) en bas
+  lines.forEach((text, index) => {
+    const x = canvas.width - marginRight;
+    const y = canvas.height - marginBottom - (lines.length - 1 - index) * lineHeight;
+    ctx.strokeText(text, x, y);
+    ctx.fillText(text, x, y);
   });
+});
 
   // 💾 Submit finalImage à Cloudinary
   window.sendFinalImage = function () {
