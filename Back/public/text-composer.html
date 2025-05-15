@@ -75,14 +75,7 @@
   ctx.textAlign = "right";
   ctx.textBaseline = "bottom"; // ✅ Position verticale contrôlée
 
-// a supp
-  ctx.strokeStyle = "red";
-ctx.beginPath();
-ctx.moveTo(0, canvas.height - marginBottom);
-ctx.lineTo(canvas.width, canvas.height - marginBottom);
-ctx.stroke();
-// a sup
-
+  
 
   const marginRight = 60;
   const marginBottom = 250;
@@ -100,6 +93,8 @@ ctx.stroke();
   ctx.strokeText(text, x, y);
   ctx.fillText(text, x, y);
 });
+});
+
 
   // 💾 Submit finalImage à Cloudinary
   window.sendFinalImage = function () {
@@ -127,7 +122,6 @@ ctx.stroke();
       .then(res => alert("✅ Image finale envoyée : " + res))
       .catch(err => alert("❌ Erreur d'envoi : " + err));
   };
-});
 });
   </script>
 </body>
