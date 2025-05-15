@@ -70,16 +70,27 @@
   ctx.drawImage(image, 0, 0, width, maxHeight);
 
   ctx.fillStyle = "#ffffff";
-  ctx.textAlign = "center";
-  ctx.font = `${Math.floor(canvas.height * 0.06)}px Roboto`;
+ctx.strokeStyle = "#000000";
+ctx.lineWidth = 4;
+ctx.font = `${Math.floor(canvas.height * 0.05)}px Roboto`;
+ctx.textAlign = "right";
 
-  if (titreVisible && titre) {
-    ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
-  }
+const marginRight = 60;
+const marginBottom = 250;
 
-  if (!anonyme && pseudo) {
-    ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
-  }
+let lines = [];
+
+if (titreVisible && titre) lines.push(titre);
+if (!anonyme && pseudo) lines.push(pseudo);
+
+lines.reverse(); // pour placer le titre au-dessus du pseudo
+
+lines.forEach((text, index) => {
+  const lineHeight = canvas.height * 0.06;
+  const y = canvas.height - marginBottom - index * lineHeight;
+  const x = canvas.width - marginRight;
+  ctx.strokeText(text, x, y);
+  ctx.fillText(text, x, y);
 });
 
 
