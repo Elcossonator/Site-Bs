@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajout de texte – MissChair</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 1rem;
+      text-align: center;
+    }
+    canvas {
+      width: 100%;
+      height: auto;
+      max-height: 80vh;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🖋️ Ajouter du texte</h2>
+  <canvas id="canvas"></canvas>
+  <br>
+  <button onclick="sendFinalImage()">📤 Valider l’image finale</button>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const cropUrl = params.get("crop");
+    const row = params.get("row");
+    const pseudo = params.get("pseudo") || "";
+    const titre = params.get("titre") || "";
+    const anonyme = params.get("anonyme") === "oui";
+    const titreVisible = params.get("titreVisible") !== "non";
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      canvas.width = image.width;
+      canvas.height = image.height;
+      ctx.drawImage(image, 0, 0);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `${Math.floor(canvas.height * 0.05)}px sans-serif`;
+      ctx.textAlign = "center";
+
+      if (titreVisible && titre) {
+        ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
+      }
+
+      if (!anonyme && pseudo) {
+        ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
+      }
+    };
+    image.src = decodeURIComponent(cropUrl);
+
+    function sendFinalImage() {
+      const dataUrl = canvas.toDataURL("image/png");
+
+      fetch("https://site-bs.onrender.com/api/submit-crop", {
+        method: "POST",
+        body: JSON.stringify({
+          finalImage: dataUrl,
+          row: row
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.text())
+      .then(res => alert("✅ Image finale envoyée : " + res))
+      .catch(err => alert("❌ Erreur d'envoi : " + err));
+    }
+  </script>
+</body>
+</html>
