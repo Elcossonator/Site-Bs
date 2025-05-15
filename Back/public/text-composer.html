@@ -54,27 +54,20 @@
     const image = new Image();
     image.crossOrigin = "anonymous";
     image.onload = () => {
-  document.fonts.ready.then(() => {
-    const aspectRatio = 9 / 16;
-    const maxHeight = window.innerHeight * 0.8;
-    const width = maxHeight * aspectRatio;
+  const aspectRatio = 9 / 16;
+  const maxHeight = window.innerHeight * 0.8;
+  const width = maxHeight * aspectRatio;
 
-    canvas.width = width;
-    canvas.height = maxHeight;
-    ctx.drawImage(image, 0, 0, width, maxHeight);
+  canvas.width = width;
+  canvas.height = maxHeight;
+  ctx.drawImage(image, 0, 0, width, maxHeight);
 
-    ctx.fillStyle = "#ffffff";
+  setTimeout(() => {
+    ctx.fillStyle = "#ff0000";
     ctx.textAlign = "center";
-    ctx.font = `${Math.floor(canvas.height * 0.06)}px Roboto`;
-
-    if (titreVisible && titre) {
-      ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
-    }
-
-    if (!anonyme && pseudo) {
-      ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
-    }
-  });
+    ctx.font = `${Math.floor(canvas.height * 0.06)}px sans-serif`;
+    ctx.fillText("DEBUG TEXTE", canvas.width / 2, canvas.height / 2);
+  }, 500);
 };
 
     if (cropUrl) {
