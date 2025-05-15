@@ -60,14 +60,24 @@
 
   canvas.width = width;
   canvas.height = maxHeight;
+
+  // 1️⃣ On dessine l'image d'abord
   ctx.drawImage(image, 0, 0, width, maxHeight);
 
-  setTimeout(() => {
-    ctx.fillStyle = "#ff0000";
+  // 2️⃣ On attend que la police soit prête (si tu veux Roboto ou autre)
+  document.fonts.ready.then(() => {
+    ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
-    ctx.font = `${Math.floor(canvas.height * 0.06)}px sans-serif`;
-    ctx.fillText("DEBUG TEXTE", canvas.width / 2, canvas.height / 2);
-  }, 500);
+    ctx.font = `${Math.floor(canvas.height * 0.06)}px Roboto`;
+
+    if (titreVisible && titre) {
+      ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
+    }
+
+    if (!anonyme && pseudo) {
+      ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
+    }
+  });
 };
 
     if (cropUrl) {
