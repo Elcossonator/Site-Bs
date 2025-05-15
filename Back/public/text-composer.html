@@ -70,22 +70,38 @@
     }
 
     window.sendFinalImage = function () {
-      const dataUrl = canvas.toDataURL("image/png");
+  const params = new URLSearchParams(window.location.search);
+  const cropUrl = decodeURIComponent(params.get("img"));
+  const row = params.get("row");
+  const pseudo = params.get("pseudo") || "";
+  const titre = params.get("titre") || "";
+  const anonyme = params.get("anonyme") === "oui";
+  const titreVisible = params.get("titreVisible") !== "non";
 
-      fetch("https://site-bs.onrender.com/api/submit-crop", {
-        method: "POST",
-        body: JSON.stringify({
-          finalImage: dataUrl,
-          row: row
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      .then(res => res.text())
-      .then(res => alert("✅ Image finale envoyée : " + res))
-      .catch(err => alert("❌ Erreur d'envoi : " + err));
-    };
+  let overlayUrl = cropUrl;
+
+  if (titreVisible && titre) {
+    overlayUrl += `/l_text:Arial_50_bold:${encodeURIComponent(titre)},co_rgb:ffffff,g_north,y_80`;
+  }
+
+  if (!anonyme && pseudo) {
+    overlayUrl += `/l_text:Arial_50:${encodeURIComponent(pseudo)},co_rgb:ffffff,g_south,y_80`;
+  }
+
+  fetch("https://site-bs.onrender.com/api/submit-crop", {
+    method: "POST",
+    body: JSON.stringify({
+      finalImage: overlayUrl,
+      row: row
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(res => res.text())
+  .then(res => alert("✅ Image finale envoyée : " + res))
+  .catch(err => alert("❌ Erreur d'envoi : " + err));
+};
   });
   </script>
 </body>
