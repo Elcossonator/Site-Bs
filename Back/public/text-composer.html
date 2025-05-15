@@ -38,96 +38,88 @@
   <br>
   <button onclick="sendFinalImage()">📤 Valider l’image finale</button>
   <script>
-     window.addEventListener("DOMContentLoaded", function () {
-    const params = new URLSearchParams(window.location.search);
-    const cropUrl = params.get("img");  // on récupère depuis ?img=...
-
-    const row = params.get("row");
-    const pseudo = params.get("pseudo") || "";
-    const titre = params.get("titre") || "";
-    const anonyme = params.get("anonyme") === "oui";
-    const titreVisible = params.get("titreVisible") !== "non";
-
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-
-    const image = new Image();
-    image.crossOrigin = "anonymous";
-    Promise.all([
-  new Promise(resolve => {
-    image.onload = resolve;
-    image.src = decodeURIComponent(cropUrl);
-  }),
-  document.fonts.ready
-]).then(() => {
-  const aspectRatio = 9 / 16;
-  const maxHeight = window.innerHeight * 0.8;
-  const width = maxHeight * aspectRatio;
-
-  canvas.width = width;
-  canvas.height = maxHeight;
-
-  ctx.drawImage(image, 0, 0, width, maxHeight);
-
-  ctx.fillStyle = "#ffffff";
-ctx.strokeStyle = "#000000";
-ctx.lineWidth = 4;
-ctx.font = `${Math.floor(canvas.height * 0.05)}px Roboto`;
-ctx.textAlign = "right";
-
-const marginRight = 60;
-const marginBottom = 250;
-
-let lines = [];
-
-if (titreVisible && titre) lines.push(titre);
-if (!anonyme && pseudo) lines.push(pseudo);
-
-lines.reverse(); // pour placer le titre au-dessus du pseudo
-
-lines.forEach((text, index) => {
-  const lineHeight = canvas.height * 0.06;
-  const y = canvas.height - marginBottom - index * lineHeight;
-  const x = canvas.width - marginRight;
-  ctx.strokeText(text, x, y);
-  ctx.fillText(text, x, y);
-});
-
-
-    window.sendFinalImage = function () {
+    window.addEventListener("DOMContentLoaded", function () {
   const params = new URLSearchParams(window.location.search);
-  const cropUrl = decodeURIComponent(params.get("img"));
+  const cropUrl = params.get("img");
   const row = params.get("row");
   const pseudo = params.get("pseudo") || "";
   const titre = params.get("titre") || "";
   const anonyme = params.get("anonyme") === "oui";
   const titreVisible = params.get("titreVisible") !== "non";
 
-  let overlayUrl = cropUrl;
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const image = new Image();
+  image.crossOrigin = "anonymous";
 
-  if (titreVisible && titre) {
-    overlayUrl += `/l_text:Arial_50_bold:${encodeURIComponent(titre)},co_rgb:ffffff,g_north,y_80`;
-  }
-
-  if (!anonyme && pseudo) {
-    overlayUrl += `/l_text:Arial_50:${encodeURIComponent(pseudo)},co_rgb:ffffff,g_south,y_80`;
-  }
-
-  fetch("https://site-bs.onrender.com/api/submit-crop", {
-    method: "POST",
-    body: JSON.stringify({
-      finalImage: overlayUrl,
-      row: row
+  Promise.all([
+    new Promise(resolve => {
+      image.onload = resolve;
+      image.src = decodeURIComponent(cropUrl);
     }),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-  .then(res => res.text())
-  .then(res => alert("✅ Image finale envoyée : " + res))
-  .catch(err => alert("❌ Erreur d'envoi : " + err));
-};
+    document.fonts.ready
+  ]).then(() => {
+    const aspectRatio = 9 / 16;
+    const maxHeight = window.innerHeight * 0.8;
+    const width = maxHeight * aspectRatio;
+
+    canvas.width = width;
+    canvas.height = maxHeight;
+
+    ctx.drawImage(image, 0, 0, width, maxHeight);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 4;
+    ctx.font = `${Math.floor(canvas.height * 0.05)}px Roboto`;
+    ctx.textAlign = "right";
+
+    const marginRight = 60;
+    const marginBottom = 250;
+
+    let lines = [];
+
+    if (titreVisible && titre) lines.push(titre);
+    if (!anonyme && pseudo) lines.push(pseudo);
+
+    lines.reverse(); // titre en haut, pseudo en bas
+
+    lines.forEach((text, index) => {
+      const lineHeight = canvas.height * 0.06;
+      const y = canvas.height - marginBottom - index * lineHeight;
+      const x = canvas.width - marginRight;
+      ctx.strokeText(text, x, y);
+      ctx.fillText(text, x, y);
+    });
   });
+
+  // 💾 Submit finalImage à Cloudinary
+  window.sendFinalImage = function () {
+    let overlayUrl = decodeURIComponent(cropUrl);
+
+    if (titreVisible && titre) {
+      overlayUrl += `/l_text:Arial_50_bold:${encodeURIComponent(titre)},co_rgb:ffffff,g_north,y_80`;
+    }
+
+    if (!anonyme && pseudo) {
+      overlayUrl += `/l_text:Arial_50:${encodeURIComponent(pseudo)},co_rgb:ffffff,g_south,y_80`;
+    }
+
+    fetch("https://site-bs.onrender.com/api/submit-crop", {
+      method: "POST",
+      body: JSON.stringify({
+        finalImage: overlayUrl,
+        row: row
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.text())
+      .then(res => alert("✅ Image finale envoyée : " + res))
+      .catch(err => alert("❌ Erreur d'envoi : " + err));
+  };
+});
   </script>
 </body>
 </html>
