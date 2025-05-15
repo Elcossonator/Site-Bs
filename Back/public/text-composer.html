@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Ajout de texte – MissChair</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: sans-serif;
@@ -36,7 +37,6 @@
   <canvas id="canvas"></canvas>
   <br>
   <button onclick="sendFinalImage()">📤 Valider l’image finale</button>
-
   <script>
      window.addEventListener("DOMContentLoaded", function () {
     const params = new URLSearchParams(window.location.search);
@@ -54,25 +54,27 @@
     const image = new Image();
     image.crossOrigin = "anonymous";
     image.onload = () => {
-  const aspectRatio = 9 / 16;
-  const maxHeight = window.innerHeight * 0.8;
-  const width = maxHeight * aspectRatio;
+  document.fonts.ready.then(() => {
+    const aspectRatio = 9 / 16;
+    const maxHeight = window.innerHeight * 0.8;
+    const width = maxHeight * aspectRatio;
 
-  canvas.width = width;
-  canvas.height = maxHeight;
-  ctx.drawImage(image, 0, 0, width, maxHeight);
+    canvas.width = width;
+    canvas.height = maxHeight;
+    ctx.drawImage(image, 0, 0, width, maxHeight);
 
-  ctx.fillStyle = "#ffffff";
-  ctx.textAlign = "center";
-  ctx.font = `${Math.floor(canvas.height * 0.06)}px Arial`;
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.font = `${Math.floor(canvas.height * 0.06)}px Roboto`;
 
-  if (titreVisible && titre) {
-    ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
-  }
+    if (titreVisible && titre) {
+      ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
+    }
 
-  if (!anonyme && pseudo) {
-    ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
-  }
+    if (!anonyme && pseudo) {
+      ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
+    }
+  });
 };
 
     if (cropUrl) {
