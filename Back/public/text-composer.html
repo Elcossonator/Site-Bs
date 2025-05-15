@@ -22,6 +22,12 @@
       padding: 10px 20px;
       font-size: 1rem;
     }
+    canvas {
+  width: auto;
+  max-height: 80vh;
+  aspect-ratio: 9 / 16;
+  border: 1px solid #ccc;
+}
   </style>
 </head>
 <body>
@@ -48,22 +54,26 @@
     const image = new Image();
     image.crossOrigin = "anonymous";
     image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      ctx.drawImage(image, 0, 0);
+  const aspectRatio = 9 / 16;
+  const maxHeight = window.innerHeight * 0.8;
+  const width = maxHeight * aspectRatio;
 
-      ctx.fillStyle = "#ffffff";
-      ctx.font = `${Math.floor(canvas.height * 0.05)}px sans-serif`;
-      ctx.textAlign = "center";
+  canvas.width = width;
+  canvas.height = maxHeight;
+  ctx.drawImage(image, 0, 0, width, maxHeight);
 
-      if (titreVisible && titre) {
-        ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
-      }
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.font = `${Math.floor(canvas.height * 0.06)}px Arial`;
 
-      if (!anonyme && pseudo) {
-        ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
-      }
-    };
+  if (titreVisible && titre) {
+    ctx.fillText(titre, canvas.width / 2, canvas.height * 0.1);
+  }
+
+  if (!anonyme && pseudo) {
+    ctx.fillText(pseudo, canvas.width / 2, canvas.height * 0.95);
+  }
+};
 
     if (cropUrl) {
       image.src = decodeURIComponent(cropUrl);
