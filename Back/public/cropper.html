@@ -84,6 +84,7 @@
   const imageData = cropper.getImageData();
   const cropBoxWidth = imageData.naturalWidth;
   const cropBoxHeight = cropBoxWidth / (9 / 16); // ratio 9:16
+  const targetAspect = 9 / 16;
 
   cropper.setCropBoxData({
     width: cropBoxWidth,
