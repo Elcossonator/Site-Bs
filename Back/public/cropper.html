@@ -68,13 +68,15 @@
 
   cropper = new Cropper(img, {
     aspectRatio: 9 / 16,
-    viewMode: 0,
-    autoCrop: true,
-    autoCropArea: 1,
-    background: false,
-    responsive: true,
-    zoomable: true,
-    movable: true,
+  viewMode: 0,
+  autoCrop: true,
+  autoCropArea: 1,
+  background: false,
+  responsive: true,
+  zoomable: true,    
+  movable: true,    
+  cropBoxMovable: false,  
+  cropBoxResizable: false,
     
     ready() {
       const imageData = cropper.getImageData();
