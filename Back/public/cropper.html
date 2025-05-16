@@ -64,18 +64,34 @@
         img.crossOrigin = "anonymous";
 
         img.onload = () => {
-          if (cropper) cropper.destroy();
-          cropper = new Cropper(img, {
-            spectRatio: 9 / 16,
-            viewMode: 0, // ✅ permet des zones vides autour
-            autoCropArea: 1,
-            background: false,
-            responsive: true,
-            zoomable: false
-          });
-        };
+  if (cropper) cropper.destroy();
 
-        img.src = decoded;
+  cropper = new Cropper(img, {
+    aspectRatio: 9 / 16,
+    viewMode: 0,
+    autoCrop: false,
+    autoCropArea: 1,
+    background: false,
+    responsive: true,
+    zoomable: false,
+    ready() {
+      const imageData = cropper.getImageData();
+      const cropWidth = imageData.naturalWidth * 0.8;
+      const cropHeight = cropWidth / (9 / 16);
+      const left = (imageData.naturalWidth - cropWidth) / 2;
+      const top = (imageData.naturalHeight - cropHeight) / 2;
+
+      cropper.setCropBoxData({
+        width: cropWidth,
+        height: cropHeight,
+        left: left,
+        top: top
+      });
+    }
+  });
+};
+
+img.src = decoded;
       }
     });
 
@@ -83,33 +99,29 @@
   if (!cropper) return;
   const imageData = cropper.getImageData();
   const cropBoxWidth = imageData.naturalWidth;
-  const cropBoxHeight = cropBoxWidth / (9 / 16); // ratio 9:16
-  const targetAspect = 9 / 16;
+  const cropBoxHeight = cropBoxWidth / (9 / 16);
+  const top = (imageData.naturalHeight - cropBoxHeight) / 2;
 
   cropper.setCropBoxData({
     width: cropBoxWidth,
     height: cropBoxHeight,
     left: 0,
-    top: (imageData.naturalHeight - cropBoxHeight) / 2
-  });
-
-  cropper.setCanvasData({
-    width: cropBoxWidth
+    top: top
   });
 }
 
 function fitHeight() {
   if (!cropper) return;
   const imageData = cropper.getImageData();
-  const targetAspect = 9 / 16;
-  const height = imageData.naturalHeight;
-  const width = height * targetAspect;
+  const cropBoxHeight = imageData.naturalHeight;
+  const cropBoxWidth = cropBoxHeight * (9 / 16);
+  const left = (imageData.naturalWidth - cropBoxWidth) / 2;
 
-  cropper.setData({
-    x: (imageData.naturalWidth - width) / 2,
-    y: 0,
-    width: width,
-    height: height
+  cropper.setCropBoxData({
+    width: cropBoxWidth,
+    height: cropBoxHeight,
+    left: left,
+    top: 0
   });
 }
   </script>
