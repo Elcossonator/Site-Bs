@@ -7,7 +7,13 @@
   <link href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet" />
   <style>
     body { font-family: sans-serif; padding: 1rem; text-align: center; }
-    #preview { max-width: 100%; max-height: 60vh; margin-bottom: 1rem; border: 1px solid #ccc; }
+    #preview {
+  max-width: 100%;
+  max-height: 60vh;
+  margin: 0 auto 1rem;
+  display: block;
+  border: 1px solid #ccc;
+}
     input, button { width: 100%; margin: 10px 0; padding: 10px; font-size: 1rem; }
   </style>
 </head>
@@ -67,29 +73,28 @@
   if (cropper) cropper.destroy();
 
   cropper = new Cropper(img, {
-    aspectRatio: 9 / 16,
-  viewMode: 0,
+  aspectRatio: 9 / 16,
+  viewMode: 1, // garde image dans cadre
   autoCrop: true,
   autoCropArea: 1,
   background: false,
   responsive: true,
-  zoomable: true,    
-  movable: false,    
-  cropBoxMovable: false,  
-  cropBoxResizable: false,
-    
-    ready() {
-      const imageData = cropper.getImageData();
-      const cropWidth = imageData.naturalWidth * 0.8;
-      const cropHeight = cropWidth / (9 / 16);
-      const left = (imageData.naturalWidth - cropWidth) / 2;
-      const top = (imageData.naturalHeight - cropHeight) / 2;
+  zoomable: true,     // ✅ zoom actif
+  movable: true,      // ✅ image déplaçable
+  cropBoxMovable: false,  // ❌ cadre non déplaçable
+  cropBoxResizable: false, // ❌ cadre non redimensionnable
+  ready() {
+    const imageData = cropper.getImageData();
+    const cropWidth = imageData.naturalWidth * 0.8;
+    const cropHeight = cropWidth / (9 / 16);
+    const left = (imageData.naturalWidth - cropWidth) / 2;
+    const top = (imageData.naturalHeight - cropHeight) / 2;
 
-      cropper.setCropBoxData({
-        width: cropWidth,
-        height: cropHeight,
-        left: left,
-        top: top
+    cropper.setCropBoxData({
+      width: cropWidth,
+      height: cropHeight,
+      left: left,
+      top: top
       });
     }
   });
