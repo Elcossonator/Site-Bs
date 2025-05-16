@@ -73,7 +73,9 @@
     autoCropArea: 1,
     background: false,
     responsive: true,
-    zoomable: false,
+    zoomable: true,
+    movable: true,
+    
     ready() {
       const imageData = cropper.getImageData();
       const cropWidth = imageData.naturalWidth * 0.8;
