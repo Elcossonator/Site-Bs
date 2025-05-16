@@ -73,7 +73,7 @@
   ctx.lineWidth = 4;
   ctx.font = `${Math.floor(canvas.height * 0.05)}px Roboto`;
   ctx.textAlign = "right";
-  ctx.textBaseline = "bottom"; // ✅ Position verticale contrôlée
+  ctx.textBaseline = "alphabetic";
 
   
 
@@ -86,10 +86,11 @@
   if (titreVisible && titre) lines.push(titre);
   if (!anonyme && pseudo) lines.push(`par ${pseudo}`);
 
-  // Le dernier texte (pseudo) en bas
+  const baseY = canvas.height - marginBottom - lineHeight * (lines.length - 1);
+
   lines.forEach((text, index) => {
   const x = canvas.width - marginRight;
-  const y = canvas.height - marginBottom - (lines.length - index - 1) * lineHeight;
+  const y = baseY + index * lineHeight;
   ctx.strokeText(text, x, y);
   ctx.fillText(text, x, y);
 });
