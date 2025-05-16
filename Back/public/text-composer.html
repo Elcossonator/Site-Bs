@@ -77,18 +77,17 @@
 
   
 
-  const marginRight = 60;
-  const marginBottom = 250;
-  const lineHeight = canvas.height * 0.06;
+  const marginRight = canvas.width * 0.055;  // ~60px si 1080
+const marginBottom = canvas.height * 0.13; // ~250px si 1920
+const lineHeight = canvas.height * 0.06;
 
-  let lines = [];
+const lines = [];
+if (titreVisible && titre) lines.push(titre);
+if (!anonyme && pseudo) lines.push(`par ${pseudo}`);
 
-  if (titreVisible && titre) lines.push(titre);
-  if (!anonyme && pseudo) lines.push(`par ${pseudo}`);
+const baseY = canvas.height - marginBottom - lineHeight * (lines.length - 1);
 
-  const baseY = canvas.height - marginBottom - lineHeight * (lines.length - 1);
-
-  lines.forEach((text, index) => {
+lines.forEach((text, index) => {
   const x = canvas.width - marginRight;
   const y = baseY + index * lineHeight;
   ctx.strokeText(text, x, y);
