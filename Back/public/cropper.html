@@ -14,6 +14,14 @@
       margin: 0 auto 1rem;
       border: 1px solid #ccc;
     }
+
+    .cropper-container {
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 80vh;
+  touch-action: none;
+}
+
     input, button {
       width: 100%;
       margin: 10px 0;
@@ -75,39 +83,34 @@
         img.crossOrigin = "anonymous";
 
         img.onload = () => {
-          if (cropper) cropper.destroy();
+  if (cropper) cropper.destroy();
+}
 
-          cropper = new Cropper(img, {
-            aspectRatio: 9 / 16,
-            viewMode: 1,
-            autoCrop: true,
-            autoCropArea: 1,
-            background: false,
-            responsive: true,
-            zoomable: true,
-            movable: true,
-            cropBoxMovable: false,
-            cropBoxResizable: false,
-            ready() {
-              const containerData = cropper.getContainerData();
-              const cropBoxWidth = containerData.width * 0.9;
-              const cropBoxHeight = cropBoxWidth / (9 / 16);
-              const left = (containerData.width - cropBoxWidth) / 2;
-              const top = (containerData.height - cropBoxHeight) / 2;
-
-              cropper.setCropBoxData({
-                width: cropBoxWidth,
-                height: cropBoxHeight,
-                left: left,
-                top: top
-              });
-            }
-          });
-        };
-
-        img.src = decoded;
-      }
-    });
+  cropper = new Cropper(img, {
+    aspectRatio: 9 / 16,
+    viewMode: 0,
+    autoCrop: true,
+    autoCropArea: 1,
+    background: false,
+    responsive: true,
+    zoomable: true,
+    movable: true,
+    cropBoxMovable: false,
+    cropBoxResizable: false,
+    dragMode: 'move',
+    ready() {
+      const containerData = cropper.getContainerData();
+      const cropBoxWidth = containerData.width * 0.9;
+      const cropBoxHeight = cropBoxWidth / (9 / 16);
+      cropper.setCropBoxData({
+        width: cropBoxWidth,
+        height: cropBoxHeight,
+        left: (containerData.width - cropBoxWidth) / 2,
+        top: (containerData.height - cropBoxHeight) / 2
+      });
+    }
+  });
+};
 
     function fitWidth() {
       if (!cropper) return;
@@ -138,6 +141,7 @@
         top: 0
       });
     }
+  });
   </script>
 </body>
 </html>
