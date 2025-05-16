@@ -66,9 +66,12 @@
         img.onload = () => {
           if (cropper) cropper.destroy();
           cropper = new Cropper(img, {
-            aspectRatio: 9 / 16,
-            viewMode: 1,
-            autoCropArea: 1
+            spectRatio: 9 / 16,
+            viewMode: 0, // ✅ permet des zones vides autour
+            autoCropArea: 1,
+            background: false,
+            responsive: true,
+            zoomable: false
           });
         };
 
