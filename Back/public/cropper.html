@@ -82,16 +82,18 @@
     function fitWidth() {
   if (!cropper) return;
   const imageData = cropper.getImageData();
-  const canvasData = cropper.getCanvasData();
-  const targetAspect = 9 / 16;
-  const width = imageData.naturalWidth;
-  const height = width / targetAspect;
+  const cropBoxWidth = imageData.naturalWidth;
+  const cropBoxHeight = cropBoxWidth / (9 / 16); // ratio 9:16
 
-  cropper.setData({
-    x: 0,
-    y: (imageData.naturalHeight - height) / 2,
-    width: width,
-    height: height
+  cropper.setCropBoxData({
+    width: cropBoxWidth,
+    height: cropBoxHeight,
+    left: 0,
+    top: (imageData.naturalHeight - cropBoxHeight) / 2
+  });
+
+  cropper.setCanvasData({
+    width: cropBoxWidth
   });
 }
 
