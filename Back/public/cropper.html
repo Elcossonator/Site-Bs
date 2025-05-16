@@ -18,6 +18,9 @@
   <input id="urlInput" placeholder="URL Cloudinary" />
   <img id="preview" />
 
+  <button onclick="fitWidth()">📏 Ajuster à la largeur</button>
+  <button onclick="fitHeight()">📐 Ajuster à la hauteur</button>
+
   <button onclick="sendToSheet()">📤 Valider le crop</button>
 
   <p id="result"></p>
@@ -72,6 +75,37 @@
         img.src = decoded;
       }
     });
+
+    function fitWidth() {
+  if (!cropper) return;
+  const imageData = cropper.getImageData();
+  const canvasData = cropper.getCanvasData();
+  const targetAspect = 9 / 16;
+  const width = imageData.naturalWidth;
+  const height = width / targetAspect;
+
+  cropper.setData({
+    x: 0,
+    y: (imageData.naturalHeight - height) / 2,
+    width: width,
+    height: height
+  });
+}
+
+function fitHeight() {
+  if (!cropper) return;
+  const imageData = cropper.getImageData();
+  const targetAspect = 9 / 16;
+  const height = imageData.naturalHeight;
+  const width = height * targetAspect;
+
+  cropper.setData({
+    x: (imageData.naturalWidth - width) / 2,
+    y: 0,
+    width: width,
+    height: height
+  });
+}
   </script>
 </body>
 </html>
